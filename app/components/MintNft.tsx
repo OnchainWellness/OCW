@@ -12,10 +12,10 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { ConnectWallet } from './ConnectWallet'
 import { getConnections, switchChain } from 'wagmi/actions'
-import { wagmiConfig } from '@/wagmi'
+import { desiredChainData, wagmiConfig } from '@/wagmi'
 import { logEvent } from '../actions/logging'
 
-const desiredChainId = 84532 // Base Sepolia
+const desiredChainId = desiredChainData.id // Base Sepolia
  
 export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
     const {address, chainId} = useAccount()

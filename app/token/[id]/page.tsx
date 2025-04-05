@@ -1,12 +1,12 @@
 import Image from "next/image";
 import logo from '@/assets/images/BTCB.svg'
 import { createPublicClient, getContract, http } from "viem";
-import { baseSepolia } from "viem/chains";
 import { NFT_ABI } from "@/app/utils/abis/NFT";
 import CreateMeetingButton from "./CreateMeetingButton";
+import { desiredChainData } from "@/wagmi";
 
 const publicClient = createPublicClient({
-  chain: baseSepolia,
+  chain: desiredChainData,
   transport: http(),
 })
 

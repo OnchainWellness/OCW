@@ -1,13 +1,13 @@
 import { NFT_ABI } from "@/app/utils/abis/NFT";
 import { createPublicClient, getContract, http } from "viem";
-import { baseSepolia } from "viem/chains";
 import btcbIcon from '@/assets/images/BTCB.svg'
 import Image from "next/image";
 import { atob } from "node:buffer";
 import Link from "next/link";
+import { desiredChainData } from "@/wagmi";
 
 const publicClient = createPublicClient({
-  chain: baseSepolia,
+  chain: desiredChainData,
   transport: http(),
 })
 const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT as `0x${string}`

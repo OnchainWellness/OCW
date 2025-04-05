@@ -21,6 +21,8 @@ export const wagmiConfig =  createConfig({
         [baseSepolia.id]: http(), // add baseSepolia for testing
     },
   });
+
+  export const desiredChainData = base
  
 declare module 'wagmi' {
   interface Register {
