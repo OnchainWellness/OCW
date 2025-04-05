@@ -39,6 +39,16 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
     functionName: 'getNftsOwned',
     args: [address]
   })
+
+  const {
+    data: nftPrice,
+  } = useReadContract({
+    address: contractAddress,
+    abi: NFT_ABI,
+    functionName: 'mintPrice'
+  })
+
+  console.log({nftPrice})
   const balance = data as unknown as { tokenId: bigint }[]
   const lastTokenId = balance?.[balance.length - 1]?.tokenId
 
@@ -48,7 +58,8 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
     writeContract({
       address: contractAddress,
       abi: NFT_ABI,
-      functionName: 'mintTo',
+      functionName: 'safeMint',
+      value: (nftPrice as bigint) > 0 ? (nftPrice as bigint) + BigInt(1) : undefined,
       args: [address],
     })
   }
@@ -72,7 +83,7 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
   useEffect(() => {
     if (error) {
       console.log('Error minting NFT:', (error as BaseError).shortMessage)
-      logEvent('mintNftError', (error as BaseError).shortMessage || (error as BaseError).message)
+      logEvent('mintNftError', (error as BaseError).message || (error as BaseError).shortMessage)
     }
   }, [error])
 
@@ -102,7 +113,6 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
             console.log({connections})
             const response = await switchChain(wagmiConfig, {
               chainId: desiredChainId,
-              connector: connections[0].connector,
             })
             console.log({response})
           }}
