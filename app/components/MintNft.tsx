@@ -1,4 +1,5 @@
 import { 
+  BaseError,
   useAccount, 
   useReadContract, 
   useWaitForTransactionReceipt, 
@@ -12,6 +13,7 @@ import { useEffect } from 'react'
 import { ConnectWallet } from './ConnectWallet'
 import { getConnections, switchChain } from 'wagmi/actions'
 import { wagmiConfig } from '@/wagmi'
+import { logEvent } from '../actions/logging'
 
 const desiredChainId = 84532 // Base Sepolia
  
@@ -67,6 +69,13 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
     }
   }, [refetchBalance, isConfirmed])
 
+  useEffect(() => {
+    if (error) {
+      console.log('Error minting NFT:', (error as BaseError).shortMessage)
+      logEvent('mintNftError', (error as BaseError).shortMessage || (error as BaseError).message)
+    }
+  }, [error])
+
   return (
       <div className='bg-black p-10 rounded-lg w-[300px] shadow-md'>
         {contractNameData.data ? <h5 className='text-xl mb-1 text-white tracking-tight'>{String(contractNameData.data)}</h5> : <h5 className='text-xl mb-1 text-white tracking-tight'>Loading...</h5>}
@@ -79,7 +88,7 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
         {isPending && <p>Waiting for user confirmation</p>}
         {isConfirming && <p>Processing transaction, please wait...</p>}
         {isConfirmed && <p>Token minted! </p>}
-        {error && <p>Error: {String(error.message)}</p>}
+        {error && <p>Error: {(error as BaseError).shortMessage || error.message}</p>}
       </div>
 
       <div className='flex justify-center'>
