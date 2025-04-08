@@ -11,7 +11,7 @@ import WorkshopsImage from '@/assets/images/workshopImage.png';
 import ExternalLink from '../ExternalLink';
 import Image from 'next/image';
 import { Modal } from '../Modal';
-import { MintNFT } from '../MintNft';
+import SubscribeOptions from '../SubscribeOptions';
 
 const secondaryTextColor = '#ffffff'
 const blueGradientColor = 'linear-gradient(90deg, #063CA9 0%, #0052FF 100%)';
@@ -93,7 +93,9 @@ const Home = () => {
         marginTop: "100px"
     }}>
       <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-          <MintNFT contractAddress={process.env.NEXT_PUBLIC_NFT_CONTRACT as `0x${string}`}/>
+        <div className='z-40 w-96 h-80 bg-black rounded-lg'>
+          <SubscribeOptions />
+        </div>
       </Modal>
       <section className='home-section hero'>
         <Hero />

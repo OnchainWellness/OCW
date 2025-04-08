@@ -64,14 +64,14 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
   }, [refetchBalance]);
 
   return (
-      <div className='bg-black p-10 rounded-lg w-[300px] shadow-md'>
+      <div className='bg-black p-10 pb-0 rounded-lg shadow-md flex flex-col justify-between gap-5'>
         {contractNameData.data ? <h5 className='text-xl mb-1 text-white tracking-tight'>{String(contractNameData.data)}</h5> : <h5 className='text-xl mb-1 text-white tracking-tight'>Loading...</h5>}
         <div className='flex justify-between mb-4' >
           <p>price: 0.0001</p>
           <p>US$0.00</p>
         </div>
 
-      <div className='flex justify-center'>
+      <div className='flex justify-between'>
         {
         !address ?
           <ConnectWallet /> :

@@ -22,7 +22,7 @@ export const wagmiConfig =  createConfig({
     },
   });
 
-  export const desiredChainData = base
+  export const desiredChainData = baseSepolia
  
 declare module 'wagmi' {
   interface Register {
