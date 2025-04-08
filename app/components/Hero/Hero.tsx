@@ -40,11 +40,11 @@ export default function Hero() {
 
   return (
     <div className='hero'>
-      <h1 className={'header-text ' + JAKARTA_SANS_700.className}>
+      <h1 className={'header-text mb-2' + JAKARTA_SANS_700.className}>
         <BorderText>onchain</BorderText> wellness<br />
       </h1>
       <p className='header-text mb-2'>
-        Powered by <Image className='w-10 h-2 inline-block' width={128} height={128} src={BTCB_128} alt='bitcoin on base' /> Bitcoin on base
+        Powered by <Image className='aspect-square inline-block w-max' src={BTCB_128} alt='bitcoin on base' /> Bitcoin on base
       </p>
       <OvalButton
         className='bg-blueGradient py-3 px-6'
