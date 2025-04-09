@@ -33,7 +33,7 @@ export default function Subscribe({token}: SubscribeParams) {
   const { connectAsync } = useConnect();
   const connectors = useConnectors();
  
-  const { data, error, isLoading, refetch } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["collectSubscription"],
     queryFn: handleCollectSubscription,
     refetchOnWindowFocus: false,
@@ -55,9 +55,9 @@ export default function Subscribe({token}: SubscribeParams) {
     }
 
     const spendPermission = {
-      account: accountAddress, // User wallet address
+      account: accountAddress as Address, // User wallet address
       spender: process.env.NEXT_PUBLIC_SPENDER_ADDRESS! as Address, // Spender smart contract wallet address
-      token: token?.address,
+      token: token?.address as Address,
       allowance: await getSubscriptionPrice(token?.address || ""),
       period: 86400, // seconds in a day
       start: 0, // unix timestamp
