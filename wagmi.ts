@@ -24,9 +24,9 @@ export const wagmiConfig =  createConfig({
     },
   });
 
-export const desiredChainData = base
-export const BTCB_ADDRESS = '0x0c41F1FC9022FEB69aF6dc666aBfE73C9FFDA7ce'
-// export const BTCB_ADDRESS = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+export const desiredChainData = baseSepolia
+// export const BTCB_ADDRESS = '0x0c41F1FC9022FEB69aF6dc666aBfE73C9FFDA7ce' // for production (BTCB)
+export const BTCB_ADDRESS = '0xF6F6bcF20bdACB2502B6e209bE828F76fb421129' // for testing (Personal Token)
 export const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
  
 declare module 'wagmi' {
