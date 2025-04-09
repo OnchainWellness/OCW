@@ -4,6 +4,7 @@ import {
   spendPermissionManagerAbi,
   spendPermissionManagerAddress,
 } from "@/app/lib/abi/SpendPermissionManager";
+import { desiredChainData } from "@/wagmi";
 
 export async function POST(request: NextRequest) {
   const spenderBundlerClient = await getSpenderWalletClient();
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       status: spendReceipt.status ? "success" : "failure",
       transactionHash: spendReceipt.transactionHash,
-      transactionUrl: `https://sepolia.basescan.org/tx/${spendReceipt.transactionHash}`,
+      transactionUrl: `${desiredChainData.blockExplorers.default.url}/tx/${spendReceipt.transactionHash}`,
     });
   } catch (error) {
     console.error(error);

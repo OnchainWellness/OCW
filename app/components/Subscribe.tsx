@@ -196,7 +196,7 @@ export default function Subscribe({token}: SubscribeParams) {
                   key={i}
                   className="hover:underline text-ellipsis truncate"
                   target="_blank"
-                  href={`https://sepolia.basescan.org/tx/${transactionHash}`}
+                  href={`${desiredChainData.blockExplorers.default.url}/tx/${transactionHash}`}
                 >
                   View transaction {transactionHash}
                 </a>
