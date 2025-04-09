@@ -141,7 +141,8 @@ export function MintNFT({contractAddress, token}: {contractAddress: `0x${string}
             </BlockButton> :
             <TransactionButton
               className='bg-black text-white border border-primaryColor hover:bg-primaryColor'
-              text={!aproveIsNeeded ? 'Mint Token' : 'Approve'}
+              disabled={!token}
+              text={!token ? 'Select a token' : !aproveIsNeeded ? 'Mint Token' : 'Approve'}
             />
           }
         </Transaction>
