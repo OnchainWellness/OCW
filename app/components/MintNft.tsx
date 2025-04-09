@@ -7,13 +7,15 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { ConnectWallet } from './ConnectWallet'
 import { switchChain } from 'wagmi/actions'
-import { desiredChainData, wagmiConfig } from '@/wagmi'
+import { BTCB_ADDRESS, desiredChainData, wagmiConfig } from '@/wagmi'
 import { LifecycleStatus, Transaction, TransactionButton, TransactionSponsor, TransactionStatus, TransactionStatusAction, TransactionStatusLabel, TransactionToast, TransactionToastAction, TransactionToastIcon, TransactionToastLabel } from '@coinbase/onchainkit/transaction'
 import BlockButton from './BlockButton/BlockButton'
+import { Token } from '@coinbase/onchainkit/token'
+import { ERC20_ABI } from '../utils/abis/ERC20'
 
 const desiredChainId = desiredChainData.id // Base Sepolia
  
-export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
+export function MintNFT({contractAddress, token}: {contractAddress: `0x${string}`, token: Token | undefined} ) {
     const {address, chainId} = useAccount()
     const router = useRouter()
     const [mintSuccess, setMintSuccess] = useState(false)
@@ -36,8 +38,40 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
     functionName: 'mintPrice'
   })
 
+  const {
+    data: allowance
+  } = useReadContract({
+    address: token?.address as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: 'allowance',
+    args: [address, contractAddress]
+  })
+
+  const {
+    data: nftPriceErc20
+  } = useReadContract({
+    address: contractAddress,
+    abi: NFT_ABI,
+    functionName: 'mintPriceErc20'
+  })
+
+
   const balance = data as unknown as { tokenId: bigint }[]
   const lastTokenId = balance?.[balance.length - 1]?.tokenId
+
+  const approveCall = {
+    address: token?.address,
+    abi: ERC20_ABI,
+    functionName: 'approve',
+    args: [contractAddress, nftPriceErc20 as bigint],
+  }
+
+  const mintWithErc20Call = {
+    address: contractAddress,
+    abi: NFT_ABI,
+    functionName: 'mintWithErc20',
+    args: [address],
+  }
 
   const mintCall = {
       address: contractAddress,
@@ -46,6 +80,14 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
       value: (nftPrice as bigint) > 0 ? (nftPrice as bigint) + BigInt(1) : undefined,
       args: [address],
     }
+
+  const calls = token?.address === BTCB_ADDRESS ? [mintWithErc20Call] : [mintCall] 
+  const aproveIsNeeded = ((allowance as bigint) < (nftPriceErc20 as bigint))
+
+  if (aproveIsNeeded) {
+    // @ts-expect-error bypass
+    calls.unshift(approveCall)
+  }
 
   async function changeRoute() {
     router.push('/token/' + lastTokenId)
@@ -59,15 +101,7 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
   }, [refetchBalance]);
 
   return (
-      <div className='bg-black rounded-lg shadow-md flex flex-col justify-between h-full'>
-        {/* {contractNameData.data ? <h5 className='text-xl mb-1 text-white tracking-tight'>{String(contractNameData.data)}</h5> : <h5 className='text-xl mb-1 text-white tracking-tight'>Loading...</h5>} */}
-        <p>Subscribe to Onchain Wellness by minting our NFT</p>
         <div>
-        <div className='flex justify-between mb-4' >
-          <p>price: 0.0001</p>
-          <p>US$0.00</p>
-        </div>
-      <div className='flex justify-between'>
         {
         !address ?
           <ConnectWallet /> :
@@ -86,7 +120,8 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
         <Transaction
           className='gap-0'
           chainId={desiredChainId}
-          calls={[mintCall]}
+          // @ts-expect-error bypass
+          calls={calls}
           onStatus={handleOnStatus}
         >
           <TransactionSponsor />
@@ -106,13 +141,11 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
             </BlockButton> :
             <TransactionButton
               className='bg-black text-white border border-primaryColor hover:bg-primaryColor'
-              text='Mint Token'
+              text={!aproveIsNeeded ? 'Mint Token' : 'Approve'}
             />
           }
         </Transaction>
         }
-      </div>
-        </div>
       </div>
   )
 }

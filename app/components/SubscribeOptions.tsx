@@ -12,7 +12,24 @@ import { formatUnits } from "viem";
 
 export default function SubscribeOptions() {
     const [token, setToken] = useState<Token>()
-
+    const tokensOptions: Token[] = [{
+            name: 'Ethereum',
+            address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+            symbol: 'ETH',
+            decimals: 18,
+            image: 'https://wallet-api-production.s3.amazonaws.com/uploads/tokens/eth_288.png',
+            chainId: 8453,
+            },
+            {
+            name: 'BTCB',
+            address: BTCB_ADDRESS,
+            symbol: 'BTCB',
+            decimals: 18,
+            image:
+                'https://btconbase.org/wp-content/uploads/2024/08/BTCB-Logo-1.png',
+            chainId: 8453,
+            },
+        ]
 
     const {data: tokenPrice, refetch: refetchTokenPrice} = useQuery({
         queryKey: ["tokenPrice"],
@@ -51,39 +68,35 @@ export default function SubscribeOptions() {
             }}
         >
             <TabItem title='Mint Token'>
-                <MintNFT contractAddress={process.env.NEXT_PUBLIC_NFT_CONTRACT as `0x${string}`}/>
+                <div className="flex flex-col justify-between h-full">
+                    <p>Subscribe to Onchain Wellness by minting our NFT</p>
+                    <div>
+                        <TokenSelectDropdown
+                            token={token} 
+                            setToken={setToken} 
+                            options={tokensOptions} 
+                        /> 
+                        <div className='flex justify-between mt-2 mb-4' >
+                        <p>price: {formattedtokenPrice?.toString()}</p>
+                        <p>US$0.00</p>
+                        </div>
+                        <MintNFT token={token} contractAddress={process.env.NEXT_PUBLIC_NFT_CONTRACT as `0x${string}`}/>
+                    </div>
+                </div>
             </TabItem>
             <TabItem title='Spend permission'>
                 <div className="flex flex-col justify-between h-full">
                     <p>Subscribe to Onchain Wellness by authorizing the app to collect payments from your account.</p>
-                    <TokenSelectDropdown
-                        token={token} 
-                        setToken={setToken} 
-                        options={[ 
-                            {
-                            name: 'Ethereum',
-                            address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-                            symbol: 'ETH',
-                            decimals: 18,
-                            image: 'https://wallet-api-production.s3.amazonaws.com/uploads/tokens/eth_288.png',
-                            chainId: 8453,
-                            },
-                            {
-                            name: 'BTCB',
-                            address: BTCB_ADDRESS,
-                            symbol: 'BTCB',
-                            decimals: 18,
-                            image:
-                                'https://btconbase.org/wp-content/uploads/2024/08/BTCB-Logo-1.png',
-                            chainId: 8453,
-                            },
-                        ]} 
-                        /> 
                     <div>
-                        <div className='flex justify-between mb-4' >
+                        <TokenSelectDropdown
+                            token={token} 
+                            setToken={setToken} 
+                            options={tokensOptions} 
+                        /> 
+                        <div className='flex justify-between mt-2 mb-4' >
                         <p>price: {formattedtokenPrice?.toString()}</p>
                         <p>US$0.00</p>
-                    </div>
+                        </div>
                     <Subscribe token={token}/>
                     </div>
                 </div>
