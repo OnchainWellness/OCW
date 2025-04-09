@@ -1,5 +1,5 @@
 "use client";
-import { cn, color, pressable, text } from "@coinbase/onchainkit/theme";
+import { cn, color, text } from "@coinbase/onchainkit/theme";
 import { useEffect, useState } from "react";
 import {
   useAccount,
@@ -8,14 +8,20 @@ import {
   useConnectors,
   useSignTypedData,
 } from "wagmi";
-import { Address, Hex, parseUnits } from "viem";
+import { Address, Hex } from "viem";
 import { useQuery } from "@tanstack/react-query";
 import { spendPermissionManagerAddress } from "@/app/lib/abi/SpendPermissionManager";
 import { desiredChainData, wagmiConfig } from "@/wagmi";
 import BlockButton from "./BlockButton/BlockButton";
 import { switchChain } from "wagmi/actions";
+import { Token } from "@coinbase/onchainkit/token";
+import { getSubscriptionPrice } from "../actions/token";
+
+interface SubscribeParams {
+  token: Token | undefined
+}
  
-export default function Subscribe() {
+export default function Subscribe({token}: SubscribeParams) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [signature, setSignature] = useState<Hex>();
   const [transactions, setTransactions] = useState<Hex[]>([]);
@@ -47,16 +53,16 @@ export default function Subscribe() {
         return;
       }
     }
- 
+
     const spendPermission = {
       account: accountAddress, // User wallet address
       spender: process.env.NEXT_PUBLIC_SPENDER_ADDRESS! as Address, // Spender smart contract wallet address
-      token: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE" as Address, // ETH (https://eips.ethereum.org/EIPS/eip-7528)
-      allowance: parseUnits("1", 10),
+      token: token?.address,
+      allowance: await getSubscriptionPrice(token?.address || ""),
       period: 86400, // seconds in a day
       start: 0, // unix timestamp
       end: 281474976710655, // max uint48
-      salt: BigInt(1),
+      salt: BigInt(2),
       extraData: "0x" as Hex,
     };
  
@@ -147,7 +153,7 @@ export default function Subscribe() {
           <BlockButton
             onClick={handleSubmit}
             type="button"
-            disabled={isDisabled}
+            disabled={isDisabled || !token}
             data-testid="ockTransactionButton_Button"
           >
             <span
@@ -157,7 +163,7 @@ export default function Subscribe() {
                 "flex justify-center"
               )}
             >
-              Subscribe
+              {!token ? 'Select a token' : 'Subscribe'}
             </span>
           </BlockButton>
         }
