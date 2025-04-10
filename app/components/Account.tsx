@@ -1,3 +1,4 @@
+import { signOut } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -32,7 +33,10 @@ export function Account() {
             <Link className='block px-4 py-2' href={'/profile/' + address}>Profile</Link>
           </div>
           <div className="hover:bg-zinc-700" role="menu">
-            <button className='px-4 py-2' onClick={() => disconnect()}>Disconnect</button>
+            <button className='px-4 py-2' onClick={() => {
+              disconnect()
+              signOut()
+            }}>Disconnect</button>
           </div>
         </div>
       )}
