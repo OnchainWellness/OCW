@@ -18,9 +18,14 @@ type TokenData = {
 }
 
 async function getTokensOwned(id: string) : Promise<TokenData[]> {
+  try {
     const contract = getContract({ address: contractAddress, abi: NFT_ABI, client: publicClient })
-    const tokenData:TokenData[] = await contract.read.getNftsOwned([id]) as TokenData[]
-    return tokenData
+    const tokenData = await contract.read.getNftsOwned([id])
+    return tokenData as TokenData[]
+  } catch (error) {
+    console.log({error})
+   return [] 
+  }
 }
 
 export default async function Profile({ params }: { params: { address: string } }) {
@@ -29,12 +34,10 @@ export default async function Profile({ params }: { params: { address: string } 
   const simpleAddress = address.slice(0, 5) + '...' + address.slice(-4);
 
   const parsedTokens = tokensOwned.map((tokenData) => {
-    const metadata = JSON.parse(atob(tokenData.metadata.split(',')[1]));
     return {
       ...tokenData,
       metadata: {
-        ...metadata,
-        image: atob(metadata.image.split(',')[1]),
+        image: btcbIcon,
       },
     };
   });
@@ -57,7 +60,7 @@ export default async function Profile({ params }: { params: { address: string } 
                 className="flex flex-col items-center justify-center bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition duration-200 ease-in-out"
               >
                 <Image src={btcbIcon} alt="NFT" className="w-24 h-24 mb-3" />
-                <p className="text-white">{String(tokenData.metadata.name.split('#')[0])}</p>
+                <p className="text-white">{'OnchainWellness'}</p>
                 <p>{'#' + String(tokenData.tokenId)}</p>
               </Link>
             ))}
