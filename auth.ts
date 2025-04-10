@@ -6,6 +6,18 @@ import { getPublicClient } from "./app/lib/spender";
 import { Signature } from "viem";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  callbacks: {
+    jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+      }
+      return token;
+    },
+    session({ session, token }) {
+      session.user.id = token.sub ?? "";
+      return session;
+    },
+  },
   providers: [
     Credentials({
         credentials: {

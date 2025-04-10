@@ -5,8 +5,20 @@ import {
   spendPermissionManagerAddress,
 } from "@/app/lib/abi/SpendPermissionManager";
 import { desiredChainData } from "@/wagmi";
+import { auth } from "@/auth";
+import { Subscription } from "@/app/models/User";
+import { modifyUserSubscription, getUserByAddress } from "@/app/lib/User";
+import { addSubscriptionPayment } from "@/app/lib/SubscriptionPayment";
 
 export async function POST(request: NextRequest) {
+  const session = await auth()
+
+  console.log({session})
+
+  if(!session || !session.user) {
+    return NextResponse.json({}, { status: 401 });
+  }
+
   const spenderBundlerClient = await getSpenderWalletClient();
   const publicClient = await getPublicClient();
   try {
@@ -19,10 +31,12 @@ export async function POST(request: NextRequest) {
       functionName: "approveWithSignature",
       args: [spendPermission, signature],
     });
- 
-    await publicClient.waitForTransactionReceipt({
+    console.log({approvalTxnHash})
+    const approvalReceived = await publicClient.waitForTransactionReceipt({
       hash: approvalTxnHash,
     });
+
+    console.log({approvalReceived})
  
     const spendTxnHash = await spenderBundlerClient.writeContract({
       address: spendPermissionManagerAddress,
@@ -30,10 +44,39 @@ export async function POST(request: NextRequest) {
       functionName: "spend",
       args: [spendPermission, "1"],
     });
+
+    console.log({spendTxnHash})
  
     const spendReceipt = await publicClient.waitForTransactionReceipt({
       hash: spendTxnHash,
     });
+
+    console.log({spendReceipt})
+
+    if (spendReceipt.status === "success") {
+      console.log('pre getting')
+      const user = await getUserByAddress(session.user.id as string)
+      console.log('post getting')
+      console.log('pre add subscription')
+      const subscriptionPayment = await addSubscriptionPayment({
+        userId: user,
+        type: 'spend-permission',
+        amount: 1,
+        txHash: spendTxnHash
+      })
+      console.log('post add subscription')
+
+      const subscription: Subscription = {
+        renewalTimestamp: subscriptionPayment.createdAt,
+        autoRenewal: true,
+        amount: 1,
+        period: 86400,
+        type: 'spend-permission'
+      }
+      console.log('pre modify user subscription')
+      await modifyUserSubscription(user, subscription)
+      console.log('post modify user subscription')
+    }
  
     return NextResponse.json({
       status: spendReceipt.status ? "success" : "failure",

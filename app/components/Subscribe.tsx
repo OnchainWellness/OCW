@@ -62,7 +62,7 @@ export default function Subscribe({token}: SubscribeParams) {
       period: 86400, // seconds in a day
       start: 0, // unix timestamp
       end: 281474976710655, // max uint48
-      salt: BigInt(2),
+      salt: BigInt(10),
       extraData: "0x" as Hex,
     };
  

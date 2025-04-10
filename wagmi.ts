@@ -9,8 +9,8 @@ export const wagmiConfig =  createConfig({
         appName: 'OnchainWellness',
         preference: 'all',
         version: '4',
-        // // @ts-expect-error bypass
-        // keysUrl: 'https://keys-dev.coinbase.com/connect'
+        // @ts-expect-error bypass
+        keysUrl: 'https://keys-dev.coinbase.com/connect'
       }),
       metaMask(),
     ],

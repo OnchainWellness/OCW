@@ -1,4 +1,4 @@
-import UserModel, { User } from "../models/User";
+import UserModel, { Subscription, User } from "../models/User";
 import dbConnect from "./dbConnect";
 
 export async function getUserByAddress(address: string) {
@@ -33,4 +33,21 @@ export async function updateUserChallenge(user: User, challengeHash: string) {
     await dbConnect()
     user.challengeHash = challengeHash
     await user.save()
+}
+
+export async function getUserSubscriptions(address: string) {
+    await dbConnect()
+    const user = await UserModel.findOne({
+        address
+    })
+
+    return user?.subscriptions
+}
+
+export async function modifyUserSubscription(user: User, subscription: Subscription) {
+    await dbConnect()
+    const newUser = await UserModel.updateOne({ address: user.address }, { $set: { subscription: subscription } })
+    console.log({newUser})
+
+    return newUser
 }
