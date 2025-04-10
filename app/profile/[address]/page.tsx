@@ -2,7 +2,6 @@ import { NFT_ABI } from "@/app/utils/abis/NFT";
 import { createPublicClient, getContract, http } from "viem";
 import btcbIcon from '@/assets/images/BTCB.svg'
 import Image from "next/image";
-import { atob } from "node:buffer";
 import Link from "next/link";
 import { desiredChainData } from "@/wagmi";
 
