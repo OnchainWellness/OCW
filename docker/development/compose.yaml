@@ -6,15 +6,11 @@ services:
     image: with-docker-multi-env-development
     ports:
       - "3001:3000"
-    env_file:
-      - ../../.env.development
-    environment:
-      MONGO_URI: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongo:27017/
   mongo:
     image: mongo
     restart: always
-    env_file:
-      - ../../.env.development
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: $MONGODB_USER
+      MONGO_INITDB_ROOT_PASSWORD: $MONGODB_PASSWORD
+    ports:
+      - "27017:27017"

@@ -4,7 +4,7 @@ build-development: ## Build the development docker image.
 
 .PHONY: start-development
 start-development: ## Start the development docker container.
-	docker compose -f docker/development/compose.yaml up -d
+	docker compose -f docker/development/compose.yaml  --env-file .env.development up -d
 
 .PHONY: stop-development
 stop-development: ## Stop the development docker container.
@@ -16,7 +16,7 @@ build-staging: ## Build the staging docker image.
 
 .PHONY: start-staging
 start-staging: ## Start the staging docker container.
-	docker compose -f docker/staging/compose.yaml up -d
+	docker compose -f docker/staging/compose.yaml --env-file .env.staging up -d
 
 .PHONY: stop-staging
 stop-staging: ## Stop the staging docker container.
@@ -28,7 +28,7 @@ build-production: ## Build the production docker image.
 
 .PHONY: start-production
 start-production: ## Start the production docker container.
-	docker compose -f docker/production/compose.yaml up -d
+	docker compose -f docker/production/compose.yaml --env-file .env.production up -d
 
 .PHONY: stop-production
 stop-production: ## Stop the production docker container.
