@@ -12,7 +12,8 @@ const publicClient = createPublicClient({
 
 const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT as `0x${string}`
 
-export default async function Page({params}: {params: {id: string}}) {
+export default async function Page(props: {params: Promise<{id: string}>}) {
+    const params = await props.params;
     const tokenOwner = await getTokenData(params.id)
 
     async function getTokenData(id: string) {

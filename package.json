@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -17,22 +17,26 @@
     "flowbite-react": "^0.11.7",
     "jsrsasign": "^11.1.0",
     "mongoose": "^8.13.2",
-    "next": "14.2.15",
+    "next": "15.3.0",
     "node-cache": "^5.1.2",
-    "react": "^18",
-    "react-dom": "^18",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "viem": "^2.17.4",
     "wagmi": "^2.11.0"
   },
   "devDependencies": {
     "@types/jsrsasign": "^10.5.15",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.2",
     "eslint": "^8",
-    "eslint-config-next": "14.2.15",
+    "eslint-config-next": "15.3.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.2"
   }
 }

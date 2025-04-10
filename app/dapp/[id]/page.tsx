@@ -7,7 +7,8 @@ export async function generateStaticParams() {
     return pages
 }
 
-export default function Page({params}: {params: {id: string}}) {
+export default async function Page(props: {params: Promise<{id: string}>}) {
+    const params = await props.params;
     console.log(params.id);
     return (
         <div className="mb-36">

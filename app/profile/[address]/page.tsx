@@ -23,7 +23,8 @@ async function getTokensOwned(id: string) : Promise<TokenData[]> {
     return tokenData
 }
 
-export default async function Profile({ params }: { params: { address: string } }) {
+export default async function Profile(props: { params: Promise<{ address: string }> }) {
+  const params = await props.params;
   const { address } = params;
   const tokensOwned = await getTokensOwned(address);
   const simpleAddress = address.slice(0, 5) + '...' + address.slice(-4);
