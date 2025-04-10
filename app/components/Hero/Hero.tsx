@@ -54,7 +54,7 @@ export default function Hero() {
       <section className='description'>
         <div className='description-header'>
           <h2 className={'text-white ' + JAKARTA_SANS_600}>The Future of Wellness</h2>
-          <p>Take control of your mental health with secure, private, and personalized support—designed for today’s world. Onchain Wellness connects you with licensed therapists for 1:1 sessions, expert-led workshops, and TxAI, our revolutionary companion that rewards you for staying on track. Accessible, innovative, and built for you. Start your journey to better wellness today.</p>
+          <p>Empowering individuals with secure, private, and personalized mental health support, Onchain Wellness redefines care for the modern, decentralized world. Our platform offers 1:1 individual therapy with licensed professionals, expert-led workshops by industry thought leaders, as well as TxAl, a groundbreaking digital wellness companion that rewards users for engaging in healthy behaviors. Accessible, innovative, and tailored to your unique journey, we're here to support you every step of the way.</p>
         </div>
         <div
           className='description-features'
