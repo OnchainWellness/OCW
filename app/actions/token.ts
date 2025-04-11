@@ -1,6 +1,7 @@
 'use server'
 
 import { BTCB_ADDRESS, ETH_ADDRESS } from "@/wagmi";
+import { randomInt } from "node:crypto";
 import { parseUnits } from "viem";
 
 const pricesDict = {
@@ -8,6 +9,9 @@ const pricesDict = {
     [ETH_ADDRESS.toLowerCase()]: parseUnits('8', 1), 
 }
 
+export async function getRandomInt() {
+    return randomInt(10, 100000)
+}
 
 export async function getSubscriptionPrice(tokenAddress: string | undefined) {
     if (!tokenAddress) {

@@ -15,7 +15,7 @@ import { desiredChainData, wagmiConfig } from "@/wagmi";
 import BlockButton from "./BlockButton/BlockButton";
 import { switchChain } from "wagmi/actions";
 import { Token } from "@coinbase/onchainkit/token";
-import { getSubscriptionPrice } from "../actions/token";
+import { getRandomInt, getSubscriptionPrice } from "../actions/token";
 
 interface SubscribeParams {
   token: Token | undefined
@@ -62,7 +62,7 @@ export default function Subscribe({token}: SubscribeParams) {
       period: 86400, // seconds in a day
       start: 0, // unix timestamp
       end: 281474976710655, // max uint48
-      salt: BigInt(10),
+      salt: BigInt(await getRandomInt()),
       extraData: "0x" as Hex,
     };
  
