@@ -16,6 +16,7 @@ import BlockButton from "./BlockButton/BlockButton";
 import { switchChain } from "wagmi/actions";
 import { Token } from "@coinbase/onchainkit/token";
 import { getRandomInt, getSubscriptionPrice } from "../actions/token";
+import { useRouter } from "next/navigation";
 
 interface SubscribeParams {
   token: Token | undefined
@@ -32,8 +33,9 @@ export default function Subscribe({token}: SubscribeParams) {
   const chainId = useChainId();
   const { connectAsync } = useConnect();
   const connectors = useConnectors();
+  const router = useRouter();
  
-  const { data, refetch } = useQuery({
+  const { data, isSuccess } = useQuery({
     queryKey: ["collectSubscription"],
     queryFn: handleCollectSubscription,
     refetchOnWindowFocus: false,
@@ -143,7 +145,7 @@ export default function Subscribe({token}: SubscribeParams) {
  
   return (
     <div>
-      {!signature ? (
+      {!signature && !isSuccess ? (
         <div className="flex">
             {chainId !== desiredChainData.id ? 
             <BlockButton onClick={()=> switchChain(wagmiConfig, {chainId: desiredChainData.id})}>
@@ -172,10 +174,12 @@ export default function Subscribe({token}: SubscribeParams) {
         <div className="space-y-8">
           <div className="flex">
             <BlockButton
-              onClick={() => refetch()}
+              onClick={() => {
+                router.push("/profile/" + account?.address)
+              }}
               type="button"
               disabled={isDisabled}
-              data-testid="collectSubscriptionButton_Button"
+              data-testid="redirectToProfileButton_Button"
             >
               <span
                 className={cn(
@@ -184,24 +188,9 @@ export default function Subscribe({token}: SubscribeParams) {
                   "flex justify-center"
                 )}
               >
-                Collect Subscription
+               View Subscription
               </span>
             </BlockButton>
-          </div>
-          <div className="space-y-4 relative">
-            <div className="text-lg font-bold">Subscription Payments</div>
-            <div className="flex flex-col">
-              {transactions.map((transactionHash, i) => (
-                <a
-                  key={i}
-                  className="hover:underline text-ellipsis truncate"
-                  target="_blank"
-                  href={`${desiredChainData.blockExplorers.default.url}/tx/${transactionHash}`}
-                >
-                  View transaction {transactionHash}
-                </a>
-              ))}
-            </div>
           </div>
         </div>
       )}
