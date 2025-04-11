@@ -40,11 +40,11 @@ export default function Hero() {
 
   return (
     <div className='hero'>
-      <h1 className={'header-text ' + JAKARTA_SANS_700.className}>
+      <h1 className={'header-text mb-2' + JAKARTA_SANS_700.className}>
         <BorderText>onchain</BorderText> wellness<br />
       </h1>
       <p className='header-text mb-2'>
-        Powered by <Image className='w-10 h-2 inline-block' width={128} height={128} src={BTCB_128} alt='bitcoin on base' /> Bitcoin on base
+        Powered by <Image className='aspect-square inline-block w-max' src={BTCB_128} alt='bitcoin on base' /> Bitcoin on base
       </p>
       <OvalButton
         className='bg-blueGradient py-3 px-6'
@@ -54,7 +54,7 @@ export default function Hero() {
       <section className='description'>
         <div className='description-header'>
           <h2 className={'text-white ' + JAKARTA_SANS_600}>The Future of Wellness</h2>
-          <p>Take control of your mental health with secure, private, and personalized support—designed for today’s world. Onchain Wellness connects you with licensed therapists for 1:1 sessions, expert-led workshops, and TxAI, our revolutionary companion that rewards you for staying on track. Accessible, innovative, and built for you. Start your journey to better wellness today.</p>
+          <p>Empowering individuals with secure, private, and personalized mental health support, Onchain Wellness redefines care for the modern, decentralized world. Our platform offers 1:1 individual therapy with licensed professionals, expert-led workshops by industry thought leaders, as well as TxAl, a groundbreaking digital wellness companion that rewards users for engaging in healthy behaviors. Accessible, innovative, and tailored to your unique journey, we&apos;re here to support you every step of the way.</p>
         </div>
         <div
           className='description-features'
