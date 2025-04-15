@@ -54,14 +54,12 @@ export async function POST(request: NextRequest) {
     console.log({spendReceipt})
 
     if (spendReceipt.status === "success") {
-      console.log('pre getting')
       const user = await getUserByAddress(session.user.id as string)
-      console.log('post getting')
-      console.log('pre add subscription')
       const subscriptionPayment = await addSubscriptionPayment({
         userId: user,
         type: 'spend-permission',
-        amount: 1,
+        amount: spendPermission.allowance,
+        token: spendPermission.token,
         txHash: spendTxnHash
       })
       console.log('post add subscription')
@@ -69,10 +67,11 @@ export async function POST(request: NextRequest) {
       const subscription: Subscription = {
         renewalTimestamp: subscriptionPayment.createdAt,
         autoRenewal: true,
-        amount: 1,
-        period: 86400,
+        amount: spendPermission.allowance,
+        period: spendPermission.period,
         type: 'spend-permission'
       }
+
       console.log('pre modify user subscription')
       await modifyUserSubscription(user, subscription)
       console.log('post modify user subscription')

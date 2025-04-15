@@ -1,32 +1,51 @@
-import SubscriptionPaymentModel from "../models/SubscriptionPayment";
+import SubscriptionPaymentModel, { SubscriptionPayment } from "../models/SubscriptionPayment";
 import dbConnect from "./dbConnect";
 
-export async function getSubscriptionPayments(userId: string) {
+export async function getSubscriptionPayments(
+    userId: string,
+    current: number,
+    maxItems: number,
+    type: 'mint' | 'spend-permission' | undefined = undefined
+) {
     await dbConnect()
-    const subscriptionPayments = await SubscriptionPaymentModel.find({
-        userId
+    const toSkip = current * maxItems
+    const paymentsCount = await SubscriptionPaymentModel.find({
+        userId,
+        // type
     })
+        .countDocuments()
 
-    return subscriptionPayments
+    const payments = await SubscriptionPaymentModel.find({
+        userId,
+        // type
+    })
+        .sort({ createdAt: -1 })
+        .limit(maxItems)
+        .skip(toSkip)
+
+    const lastpage = Math.ceil(paymentsCount / maxItems)
+
+    return {
+        payments,
+        lastpage,
+        maxItems,
+    }
 }
 
 export async function addSubscriptionPayment({
     userId,
     type,
     amount,
+    token,
     txHash
-}: {
-    userId: string,
-    type: 'mint' | 'spend-permission',
-    amount: number,
-    txHash: string
-}) {
+}: SubscriptionPayment) {
     await dbConnect()
     const payment = new SubscriptionPaymentModel({
         userId,
         type,
         amount,
-        txHash
+        txHash,
+        token
     })
     await payment.save()
     return payment

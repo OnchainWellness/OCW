@@ -5,6 +5,7 @@ export interface SubscriptionPayment extends mongoose.Document {
     type: 'mint' | 'spend-permission',
     amount: number,
     txHash: string,
+    token: string,
 }
 
 
@@ -26,7 +27,11 @@ const SubscriptionPaymentSchema = new mongoose.Schema<SubscriptionPayment>({
     txHash: {
         type: String,
         required: [true, "Please provide a valid transaction hash."],
-    }
+    },
+    token: {
+        type: String,
+        required: [true, "Please provide a valid token address."],
+    },
 }, {
     timestamps: true
 });

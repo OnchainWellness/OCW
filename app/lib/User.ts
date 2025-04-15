@@ -1,7 +1,7 @@
 import UserModel, { Subscription, User } from "../models/User";
 import dbConnect from "./dbConnect";
 
-export async function getUserByAddress(address: string) {
+export async function getUserByAddress(address: string): Promise<User | null> {
     await dbConnect()
     const user = await UserModel.findOne({
         address
