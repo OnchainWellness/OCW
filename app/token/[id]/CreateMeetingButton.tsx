@@ -61,7 +61,7 @@ export default function CreateMeetingButton({tokenOwnerAddress}: { tokenOwnerAdd
                 onClick={handleClick}
                 className="bg-blue-500 text-white px-4 py-3 rounded"
                 >
-                    {isSuccess ? 'Get Meeting' : 'Create Meeting'}
+                    {isSuccess ? 'Get Meeting' : 'Get Meeting'}
                 </OvalButton>
             </div>
         );

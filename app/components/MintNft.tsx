@@ -12,6 +12,7 @@ import { LifecycleStatus, Transaction, TransactionButton, TransactionSponsor, Tr
 import BlockButton from './BlockButton/BlockButton'
 import { Token } from '@coinbase/onchainkit/token'
 import { ERC20_ABI } from '../utils/abis/ERC20'
+import { verifyMintSubscription } from '../actions/subscription'
 
 const desiredChainId = desiredChainData.id // Base Sepolia
  
@@ -19,16 +20,6 @@ export function MintNFT({contractAddress, token}: {contractAddress: `0x${string}
     const {address, chainId} = useAccount()
     const router = useRouter()
     const [mintSuccess, setMintSuccess] = useState(false)
-
-  const {
-    data,
-    refetch: refetchBalance,
-  } = useReadContract({
-    address: contractAddress,
-    abi: NFT_ABI,
-    functionName: 'getNftsOwned',
-    args: [address]
-  })
 
   const {
     data: nftPrice,
@@ -55,9 +46,6 @@ export function MintNFT({contractAddress, token}: {contractAddress: `0x${string}
     functionName: 'mintPriceErc20'
   })
 
-
-  const balance = data as unknown as { tokenId: bigint }[]
-  const lastTokenId = balance?.[balance.length - 1]?.tokenId
 
   const approveCall = {
     address: token?.address,
@@ -90,15 +78,18 @@ export function MintNFT({contractAddress, token}: {contractAddress: `0x${string}
   }
 
   async function changeRoute() {
-    router.push('/token/' + lastTokenId)
+    router.push('/profile/' + address)
   }
 
   const handleOnStatus = useCallback((status: LifecycleStatus) => {
     if(status.statusName === 'success') {
-      setMintSuccess(true)
-      refetchBalance()
+      const amount = token?.address === BTCB_ADDRESS ? nftPriceErc20 : nftPrice
+      verifyMintSubscription(status.statusData.transactionReceipts[0].transactionHash, Number(amount as bigint), 'mint')
+        .then(()=> {
+          setMintSuccess(true)
+        })
     }
-  }, [refetchBalance]);
+  }, []);
 
   return (
         <div>
@@ -137,7 +128,7 @@ export function MintNFT({contractAddress, token}: {contractAddress: `0x${string}
           {
             mintSuccess ?
             <BlockButton onClick={changeRoute}>
-              NFT Details
+              View Subscription
             </BlockButton> :
             <TransactionButton
               className='bg-black text-white border border-primaryColor hover:bg-primaryColor'

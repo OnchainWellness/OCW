@@ -5,7 +5,6 @@ export async function getSubscriptionPayments(
     userId: string,
     current: number,
     maxItems: number,
-    type: 'mint' | 'spend-permission' | undefined = undefined
 ) {
     await dbConnect()
     const toSkip = current * maxItems

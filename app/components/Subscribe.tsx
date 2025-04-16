@@ -90,6 +90,7 @@ export default function Subscribe({token}: SubscribeParams) {
           ],
         },
         primaryType: "SpendPermission",
+        // @ts-expect-error bypass
         message: spendPermission,
       });
       setSpendPermission(spendPermission);

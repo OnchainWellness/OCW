@@ -55,7 +55,12 @@ export async function POST(request: NextRequest) {
 
     if (spendReceipt.status === "success") {
       const user = await getUserByAddress(session.user.id as string)
+      if(!user) {
+        return null
+      }
+
       const subscriptionPayment = await addSubscriptionPayment({
+        // @ts-expect-error bypass
         userId: user,
         type: 'spend-permission',
         amount: spendPermission.allowance,

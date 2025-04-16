@@ -5,31 +5,13 @@ import { MintNFT } from "./MintNft";
 import Subscribe from "./Subscribe";
 import { useEffect, useState } from "react";
 import { Token, TokenSelectDropdown } from "@coinbase/onchainkit/token";
-import { BTCB_ADDRESS } from "@/wagmi";
+import { tokensOptions } from "@/wagmi";
 import { getSubscriptionPrice } from "../actions/token";
 import { useQuery } from "@tanstack/react-query";
 import { formatUnits } from "viem";
 
 export default function SubscribeOptions() {
     const [token, setToken] = useState<Token>()
-    const tokensOptions: Token[] = [{
-            name: 'Ethereum',
-            address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-            symbol: 'ETH',
-            decimals: 18,
-            image: 'https://wallet-api-production.s3.amazonaws.com/uploads/tokens/eth_288.png',
-            chainId: 8453,
-            },
-            {
-            name: 'BTCB',
-            address: BTCB_ADDRESS,
-            symbol: 'BTCB',
-            decimals: 18,
-            image:
-                'https://btconbase.org/wp-content/uploads/2024/08/BTCB-Logo-1.png',
-            chainId: 8453,
-            },
-        ]
 
     const {data: tokenPrice, refetch: refetchTokenPrice} = useQuery({
         queryKey: ["tokenPrice"],
@@ -38,7 +20,7 @@ export default function SubscribeOptions() {
         enabled: !!token,
     });
 
-    const formattedtokenPrice = tokenPrice && token ? formatUnits(tokenPrice, token.decimals) : undefined
+    const formattedtokenPrice = tokenPrice && token ? formatUnits(tokenPrice as bigint, token.decimals) : undefined
 
     useEffect(() => {
         refetchTokenPrice()

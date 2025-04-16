@@ -3,10 +3,33 @@
 import { BTCB_ADDRESS, ETH_ADDRESS } from "@/wagmi";
 import { randomInt } from "node:crypto";
 import { parseUnits } from "viem";
+import { getPublicClient } from "../lib/spender";
+import { NFT_ABI } from "../utils/abis/NFT";
+
+const publicClient = await getPublicClient()
+
+const mintPrice = await publicClient.readContract({
+    address: process.env.NEXT_PUBLIC_NFT_CONTRACT as `0x${string}`,
+    abi: NFT_ABI,
+    functionName: 'mintPrice',
+    args: []
+})
+
+const mintPriceErc20 = await publicClient.readContract({
+    address: process.env.NEXT_PUBLIC_NFT_CONTRACT as `0x${string}`,
+    abi: NFT_ABI,
+    functionName: 'mintPriceErc20',
+    args: []
+})
+
+// const pricesDict = {
+//     [BTCB_ADDRESS.toLowerCase()]: parseUnits('5', 1),
+//     [ETH_ADDRESS.toLowerCase()]: parseUnits('8', 1), 
+// }
 
 const pricesDict = {
-    [BTCB_ADDRESS.toLowerCase()]: parseUnits('5', 1),
-    [ETH_ADDRESS.toLowerCase()]: parseUnits('8', 1), 
+    [BTCB_ADDRESS.toLowerCase()]: mintPriceErc20,
+    [ETH_ADDRESS.toLowerCase()]: mintPrice
 }
 
 export async function getRandomInt() {

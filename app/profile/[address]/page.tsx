@@ -1,7 +1,4 @@
-import { NFT_ABI } from "@/app/utils/abis/NFT";
-import { createPublicClient, getContract, http } from "viem";
-import btcbIcon from '@/assets/images/BTCB.svg'
-import Image from "next/image";
+import { formatUnits } from "viem";
 import Link from "next/link";
 import { desiredChainData } from "@/wagmi";
 import { auth } from "@/auth";
@@ -11,45 +8,13 @@ import { getSubscriptionPayments } from "@/app/lib/SubscriptionPayment";
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
 import CreateMeetingButton from "@/app/token/[id]/CreateMeetingButton";
 
-const publicClient = createPublicClient({
-  chain: desiredChainData,
-  transport: http(),
-})
-const contractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT as `0x${string}`
-
-type TokenData = {
-    tokenId: bigint;
-    metadata: string;
-}
-
-async function getTokensOwned(id: string) : Promise<TokenData[]> {
-  try {
-    const contract = getContract({ address: contractAddress, abi: NFT_ABI, client: publicClient })
-    const tokenData = await contract.read.getNftsOwned([id])
-    return tokenData as TokenData[]
-  } catch (error) {
-    console.log({error})
-   return [] 
-  }
-}
-
 export default async function Profile(props: { params: Promise<{ address: string }> }) {
   const params = await props.params;
   const { address } = params;
-  const tokensOwned = await getTokensOwned(address);
   const simpleAddress = address.slice(0, 5) + '...' + address.slice(-4);
   const session = await auth()
   const sessionAddress = session?.user?.id
   const isOwner = sessionAddress === address
-
-  const parsedTokens = tokensOwned.map((tokenData) => {
-    return {
-      ...tokenData,
-      metadata: {
-        image: btcbIcon,
-      },
-    };
-  });
 
   const userData = await getUserByAddress(address)
   const userSubscription = getUserSubscription(userData)
@@ -109,7 +74,7 @@ export default async function Profile(props: { params: Promise<{ address: string
               <TableRow key={payment.id}>
                 <TableCell>{new Date(payment.createdAt).toLocaleDateString()}</TableCell>
                 <TableCell>{payment.type}</TableCell>
-                <TableCell>{payment.amount}</TableCell>
+                <TableCell>{formatUnits(payment.amount, 18)}</TableCell>
                 <TableCell><Link className="text-white underline" href={`${desiredChainData.blockExplorers.default.url}/tx/${payment.txHash}`} target="_blank" rel="noreferrer">{payment.txHash.slice(0, 12) + '...'}</Link></TableCell>  
               </TableRow>
             ))
