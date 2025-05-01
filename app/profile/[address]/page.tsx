@@ -7,6 +7,7 @@ import { getSubscriptionPayments } from "@/lib/SubscriptionPayment";
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
 import CreateMeetingButton from "@/app/token/[id]/CreateMeetingButton";
 import { Prisma } from "@prisma/client";
+import SubscribeButton from "@/app/components/SubscribeButton";
 
 export default async function Profile(props: { params: Promise<{ address: string }> }) {
   const params = await props.params;
@@ -45,13 +46,17 @@ export default async function Profile(props: { params: Promise<{ address: string
         <h1 className="text-3xl text-white">{simpleAddress}</h1>
           <p className="text-white mb-1">Subscription: <span className={userSubscription?.isActive ? 'text-green-500' : 'text-red-500'}>{userSubscription?.isActive ? 'Active' : 'Expired'}</span></p>
           <p className="">
-            {userSubscription?.daysLeft} day<span className={userSubscription?.daysLeft && userSubscription.daysLeft > 1 ? '' : 'hidden'}>s</span> left
+            {userSubscription?.daysLeft ?? 0} day<span className={userSubscription?.daysLeft && userSubscription.daysLeft > 1 ? '' : 'hidden'}>s</span> left
           </p>
         {
-          session && isOwner &&
-        (<div>
+          session && isOwner && (userSubscription?.isActive ? 
+        <div>
           <CreateMeetingButton tokenOwnerAddress={address as `0x${string}`} /> 
-        </div>)
+        </div> : 
+          <div>
+            <SubscribeButton />
+          </div>
+        )
         }
       </div>
       { session && isOwner &&
