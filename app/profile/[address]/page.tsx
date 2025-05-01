@@ -1,12 +1,12 @@
 import { formatUnits } from "viem";
 import Link from "next/link";
-import { desiredChainData } from "@/wagmi";
+import { desiredChainData } from "@/config";
 import { auth } from "@/auth";
-import { getUserByAddress } from "@/app/lib/User";
-import { User } from "@/app/models/User";
-import { getSubscriptionPayments } from "@/app/lib/SubscriptionPayment";
+import { getUserByAddress } from "@/lib/User";
+import { getSubscriptionPayments } from "@/lib/SubscriptionPayment";
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
 import CreateMeetingButton from "@/app/token/[id]/CreateMeetingButton";
+import { Prisma } from "@prisma/client";
 
 export default async function Profile(props: { params: Promise<{ address: string }> }) {
   const params = await props.params;
@@ -20,10 +20,10 @@ export default async function Profile(props: { params: Promise<{ address: string
   const userSubscription = getUserSubscription(userData)
   const subscriptionPayments = await getSubscriptionPayments(userData?.id, 0, 10)
 
-  function getUserSubscription(userData: User | null) {
+  function getUserSubscription(userData: Prisma.UserWhereUniqueInput | null) {
     if(userData && userData.subscription) {
-      const periodInMilliseconds = userData.subscription.period * 1000
-      const renewalTimestamp = userData.subscription.renewalTimestamp.getTime()
+      const periodInMilliseconds = 1000 * (userData.subscription.period as number)
+      const renewalTimestamp = (userData.subscription.renewalTimestamp as Date).getTime()
       const isActive = renewalTimestamp + periodInMilliseconds > Date.now()
       const expirationDate = new Date(renewalTimestamp + periodInMilliseconds)
       const daysLeft = Math.ceil((expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) 

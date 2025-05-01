@@ -1,10 +1,10 @@
 'use server'
 
 import { auth } from "@/auth"
-import { getUserByAddress, modifyUserSubscription } from "../lib/User"
-import { addSubscriptionPayment } from "../lib/SubscriptionPayment"
-import { Subscription } from "../models/User"
-import { getPublicClient } from "../lib/spender"
+import { getUserByAddress, modifyUserSubscription } from "../../lib/User"
+import { addSubscriptionPayment } from "../../lib/SubscriptionPayment"
+import { getPublicClient } from "../../lib/spender"
+import { subscriptionPeriod } from "@/config"
 
 export async function verifyMintSubscription(txHash: `0x${string}`, amount: number, type: 'mint' | 'spend-permission') {
     const session = await auth()
@@ -21,7 +21,7 @@ export async function verifyMintSubscription(txHash: `0x${string}`, amount: numb
 
     const txBlock = await publicClient.getBlock({ blockHash: transaction.blockHash })
     console.log({transaction, receiptLogs: receipt.logs})
-    const period = 86400
+    const period = subscriptionPeriod
 
     
     const user = await getUserByAddress(session.user.id as string)
@@ -37,8 +37,7 @@ export async function verifyMintSubscription(txHash: `0x${string}`, amount: numb
     console.log({amount})
 
     const subscriptionPayment = await addSubscriptionPayment({
-        // @ts-expect-error bypass
-        userId: user,
+        user,
         type,
         amount,
         token: process.env.NEXT_PUBLIC_NFT_CONTRACT as `0x${string}`,
@@ -46,15 +45,15 @@ export async function verifyMintSubscription(txHash: `0x${string}`, amount: numb
     })
     console.log('post add subscription')
 
-    const subscription: Subscription = {
+    const subscription = {
         renewalTimestamp: subscriptionPayment.createdAt,
         autoRenewal: true,
-        amount,
+        amount: BigInt(amount),
         period: period,
         type
     }
 
     console.log('pre modify user subscription')
-    await modifyUserSubscription(user, subscription)
+    await modifyUserSubscription(user.id, subscription)
     console.log('post modify user subscription')    
 }

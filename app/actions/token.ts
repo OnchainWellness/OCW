@@ -1,9 +1,9 @@
 'use server'
 
-import { BTCB_ADDRESS, ETH_ADDRESS } from "@/wagmi";
+import { BTCB_ADDRESS, ETH_ADDRESS } from "@/config";
 import { randomInt } from "node:crypto";
 import { parseUnits } from "viem";
-import { getPublicClient } from "../lib/spender";
+import { getPublicClient } from "../../lib/spender";
 import { NFT_ABI } from "../utils/abis/NFT";
 
 const publicClient = await getPublicClient()

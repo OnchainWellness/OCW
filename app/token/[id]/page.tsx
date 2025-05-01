@@ -3,7 +3,7 @@ import logo from '@/assets/images/BTCB.svg'
 import { createPublicClient, getContract, http } from "viem";
 import { NFT_ABI } from "@/app/utils/abis/NFT";
 import CreateMeetingButton from "./CreateMeetingButton";
-import { desiredChainData } from "@/wagmi";
+import { desiredChainData } from "@/config";
 
 const publicClient = createPublicClient({
   chain: desiredChainData,

@@ -9,7 +9,8 @@ import Image, { StaticImageData } from 'next/image'
 import { generateChallenge } from '../actions/challenge'
 import { signIn } from 'next-auth/webauthn'
 import { switchChain } from 'wagmi/actions'
-import { desiredChainData, wagmiConfig } from '@/wagmi'
+import { wagmiConfig } from '@/wagmi'
+import { desiredChainData } from '@/config'
 // import { generateChallenge, verifySignature } from '../actions/challenge'
 
 const connectorIdIconMap: { [key: string]: StaticImageData } = {

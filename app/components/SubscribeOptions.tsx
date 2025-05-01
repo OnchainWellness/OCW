@@ -5,7 +5,7 @@ import { MintNFT } from "./MintNft";
 import Subscribe from "./Subscribe";
 import { useEffect, useState } from "react";
 import { Token, TokenSelectDropdown } from "@coinbase/onchainkit/token";
-import { tokensOptions } from "@/wagmi";
+import { tokensOptions } from "@/config";
 import { getSubscriptionPrice } from "../actions/token";
 import { useQuery } from "@tanstack/react-query";
 import { formatUnits } from "viem";

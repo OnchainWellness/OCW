@@ -28,6 +28,7 @@ const UserSchema = new mongoose.Schema<User>({
     type: String,
     required: [true, "Please provide a valid Ethereum address."],
     maxlength: [42, "Address cannot be more than 42 characters"],
+    unique: true
   },
   challengeHash: {
     type: String,

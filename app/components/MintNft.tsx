@@ -7,12 +7,13 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { ConnectWallet } from './ConnectWallet'
 import { switchChain } from 'wagmi/actions'
-import { BTCB_ADDRESS, desiredChainData, wagmiConfig } from '@/wagmi'
+import { BTCB_ADDRESS, desiredChainData } from '@/config'
 import { LifecycleStatus, Transaction, TransactionButton, TransactionSponsor, TransactionStatus, TransactionStatusAction, TransactionStatusLabel, TransactionToast, TransactionToastAction, TransactionToastIcon, TransactionToastLabel } from '@coinbase/onchainkit/transaction'
 import BlockButton from './BlockButton/BlockButton'
 import { Token } from '@coinbase/onchainkit/token'
 import { ERC20_ABI } from '../utils/abis/ERC20'
 import { verifyMintSubscription } from '../actions/subscription'
+import { wagmiConfig } from '@/wagmi'
 
 const desiredChainId = desiredChainData.id // Base Sepolia
  
@@ -84,12 +85,13 @@ export function MintNFT({contractAddress, token}: {contractAddress: `0x${string}
   const handleOnStatus = useCallback((status: LifecycleStatus) => {
     if(status.statusName === 'success') {
       const amount = token?.address === BTCB_ADDRESS ? nftPriceErc20 : nftPrice
+      console.log({amount})
       verifyMintSubscription(status.statusData.transactionReceipts[0].transactionHash, Number(amount as bigint), 'mint')
         .then(()=> {
           setMintSuccess(true)
         })
     }
-  }, []);
+  }, [nftPrice, nftPriceErc20, token]);
 
   return (
         <div>

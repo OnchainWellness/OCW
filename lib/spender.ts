@@ -1,4 +1,4 @@
-import { desiredChainData } from "@/wagmi";
+import { desiredChainData } from "@/config";
 import { createPublicClient, createWalletClient, Hex, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
  

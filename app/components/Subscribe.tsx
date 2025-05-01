@@ -10,13 +10,14 @@ import {
 } from "wagmi";
 import { Address, Hex } from "viem";
 import { useQuery } from "@tanstack/react-query";
-import { spendPermissionManagerAddress } from "@/app/lib/abi/SpendPermissionManager";
-import { desiredChainData, wagmiConfig } from "@/wagmi";
+import { spendPermissionManagerAddress } from "@/lib/abi/SpendPermissionManager";
+import { desiredChainData, subscriptionPeriod } from "@/config";
 import BlockButton from "./BlockButton/BlockButton";
 import { switchChain } from "wagmi/actions";
 import { Token } from "@coinbase/onchainkit/token";
 import { getRandomInt, getSubscriptionPrice } from "../actions/token";
 import { useRouter } from "next/navigation";
+import { wagmiConfig } from "@/wagmi";
 
 interface SubscribeParams {
   token: Token | undefined
@@ -61,7 +62,7 @@ export default function Subscribe({token}: SubscribeParams) {
       spender: process.env.NEXT_PUBLIC_SPENDER_ADDRESS! as Address, // Spender smart contract wallet address
       token: token?.address as Address,
       allowance: await getSubscriptionPrice(token?.address || ""),
-      period: 86400, // seconds in a day
+      period: subscriptionPeriod, // seconds in a day
       start: 0, // unix timestamp
       end: 281474976710655, // max uint48
       salt: BigInt(await getRandomInt()),

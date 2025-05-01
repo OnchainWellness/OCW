@@ -1,9 +1,15 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { getUserByAddress } from "./app/lib/User";
 import { constructAuthMessage } from "./app/api/auth/utils/challenge";
-import { getPublicClient } from "./app/lib/spender";
+import { getPublicClient } from "./lib/spender";
 import { Signature } from "viem";
+import prisma from "./lib/dbPrisma";
+import { getUserByAddress } from "./lib/User";
+// import { PrismaAdapter } from "@auth/prisma-adapter";
+// import client from "./lib/db";
+// import { PrismaClient } from "@prisma/client";
+
+// const prisma = PrismaClient();
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
@@ -18,6 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
   },
+  // adapter: PrismaAdapter(prisma),
   providers: [
     Credentials({
         credentials: {
@@ -25,29 +32,38 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             address: {}
         },
         authorize: async (credentials) => {
+            let isValidSignature
+            try {
             const challengeMessage = 'OnchainWellness wants to connect to your wallet. Please sign this message to continue:'
             const user = await getUserByAddress(credentials.address as string)
+            if(!user || !user.challengeHash) {
+              return null
+            }
+            // const user = {challengeHash: 'test'}
             const storedChallenge = constructAuthMessage(challengeMessage, user.challengeHash)
 
             const publicClient = await getPublicClient()
-            let isValidSignature
-            try {
                 isValidSignature = await publicClient.verifyTypedData({
                     ...storedChallenge,
                     address: credentials.address as `0x${string}`,
                     signature: credentials.signature as Signature
                 })
-            }
-            catch (error) {
-                console.log({error})
+
+            if(!isValidSignature) {
+              console.log('invalid signature ')
                 return null
             }
-
-            if(!isValidSignature || user.address !== credentials.address) {
+            if(user.address !== credentials.address) {
+              console.log('invalid address ')
                 return null
             }
             return {
                 id: credentials.address as string
+            }
+          }
+            catch (error) {
+                console.log({error})
+                return null
             }
         },
     })

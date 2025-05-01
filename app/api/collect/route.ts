@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPublicClient, getSpenderWalletClient } from "@/app/lib/spender";
+import { getPublicClient, getSpenderWalletClient } from "@/lib/spender";
 import {
   spendPermissionManagerAbi,
   spendPermissionManagerAddress,
-} from "@/app/lib/abi/SpendPermissionManager";
-import { desiredChainData } from "@/wagmi";
+} from "@/lib/abi/SpendPermissionManager";
+import { desiredChainData } from "@/config";
 import { auth } from "@/auth";
-import { Subscription } from "@/app/models/User";
-import { modifyUserSubscription, getUserByAddress } from "@/app/lib/User";
-import { addSubscriptionPayment } from "@/app/lib/SubscriptionPayment";
+import { modifyUserSubscription, getUserByAddress } from "@/lib/User";
+import { addSubscriptionPayment } from "@/lib/SubscriptionPayment";
 
 export async function POST(request: NextRequest) {
   const session = await auth()
@@ -56,12 +55,11 @@ export async function POST(request: NextRequest) {
     if (spendReceipt.status === "success") {
       const user = await getUserByAddress(session.user.id as string)
       if(!user) {
-        return null
+        return NextResponse.json({}, { status: 500 });
       }
 
       const subscriptionPayment = await addSubscriptionPayment({
-        // @ts-expect-error bypass
-        userId: user,
+        user,
         type: 'spend-permission',
         amount: spendPermission.allowance,
         token: spendPermission.token,
@@ -69,16 +67,16 @@ export async function POST(request: NextRequest) {
       })
       console.log('post add subscription')
 
-      const subscription: Subscription = {
+      const subscription = {
         renewalTimestamp: subscriptionPayment.createdAt,
         autoRenewal: true,
-        amount: spendPermission.allowance,
+        amount: BigInt(spendPermission.allowance),
         period: spendPermission.period,
         type: 'spend-permission'
       }
 
       console.log('pre modify user subscription')
-      await modifyUserSubscription(user, subscription)
+      await modifyUserSubscription(user.id, subscription)
       console.log('post modify user subscription')
     }
  
