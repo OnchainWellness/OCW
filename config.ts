@@ -1,7 +1,7 @@
 import { Token } from "@coinbase/onchainkit/token"
-import { baseSepolia } from "viem/chains"
+import { base } from "viem/chains"
 
-export const desiredChainData = baseSepolia
+export const desiredChainData = base
 // export const BTCB_ADDRESS = '0x0c41F1FC9022FEB69aF6dc666aBfE73C9FFDA7ce' // for production (BTCB)
 export const BTCB_ADDRESS = '0xF6F6bcF20bdACB2502B6e209bE828F76fb421129' // for testing (Personal Token)
 export const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
