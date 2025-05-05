@@ -1,16 +1,19 @@
 import { signOut } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi'
+import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
+// const dappRoute = '/dapp/lo0m1pa2k'
+const dappRoute = '/'
 
 export function Account() {
   const { address, chain } = useAccount()
-  const { disconnect } = useDisconnect()
   const { data: ensName } = useEnsName({ address })
   const { data: ensAvatar } = useEnsAvatar({ name: ensName! })
   const [isOpen, setIsOpen] = useState(false);
   const toggleDropdown = () => setIsOpen(!isOpen);
+  const router = useRouter()
 
   console.log('chain', chain)
 
@@ -34,8 +37,13 @@ export function Account() {
           </div>
           <div className="hover:bg-zinc-700" role="menu">
             <button className='px-4 py-2' onClick={() => {
-              disconnect()
-              signOut()
+              signOut({
+                redirect: false,
+                redirectTo: dappRoute
+              })
+              .then(()=> {
+                router.push(dappRoute)
+              })
             }}>Disconnect</button>
           </div>
         </div>
