@@ -42,15 +42,18 @@ export default async function Profile(props: { params: Promise<{ address: string
 
   return (
     <main className="mt-14 p-5 max-w-[1200px] mx-auto">
-      <div className="flex justify-between items-center mb-8">
+      <div className="sm:flex justify-between items-center mb-8">
         <h1 className="text-3xl text-white">{simpleAddress}</h1>
-          <p className="text-white mb-1">Subscription: <span className={userSubscription?.isActive ? 'text-green-500' : 'text-red-500'}>{userSubscription?.isActive ? 'Active' : 'Expired'}</span></p>
+        <div className="flex justify-between">
+        <div>
+          <p className="text-white text-lg mb-0">Subscription: <span className={userSubscription?.isActive ? 'text-green-500' : 'text-red-500'}>{userSubscription?.isActive ? 'Active' : 'Expired'}</span></p>
           <p className="">
             {userSubscription?.daysLeft ?? 0} day<span className={userSubscription?.daysLeft && userSubscription.daysLeft > 1 ? '' : 'hidden'}>s</span> left
           </p>
+        </div>
         {
           session && isOwner && (userSubscription?.isActive ? 
-        <div>
+        <div className="flex text-sm sm:text-base justify-center">
           <CreateMeetingButton tokenOwnerAddress={address as `0x${string}`} /> 
         </div> : 
           <div>
@@ -58,13 +61,15 @@ export default async function Profile(props: { params: Promise<{ address: string
           </div>
         )
         }
+        </div>
       </div>
       { session && isOwner &&
           <div className="tet-right">
           </div>
       }
       <h2 className="text-xl text-white mb-4">Payments:</h2>
-      <Table className="mb-24">
+      <div style={{overflowY: 'auto'}} className="mb-24">
+      <Table>
         <TableHead className="text-white bg-gray-800 dark:bg-gray-200 rounded-none">
           <TableRow className="bg-gray-800">
             <TableHeadCell>Date</TableHeadCell>
@@ -86,6 +91,7 @@ export default async function Profile(props: { params: Promise<{ address: string
           }
         </TableBody>
       </Table>
+      </div>
     </main>
   );
 }
