@@ -1,6 +1,6 @@
 .header-text {
     text-transform: uppercase;
-    font-weight: 700;
+    font-weight: 600;
     text-align: left;
     -webkit-text-stroke: 1px white;
     color: white;
@@ -42,7 +42,6 @@ p.header-text img {
 
 .hero .border-only .over {
     position: absolute;
-    top: 1;
     right: 0;
     width: 100%;
     height: 100%;

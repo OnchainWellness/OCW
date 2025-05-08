@@ -1,44 +1,26 @@
 import { 
-  BaseError,
   useAccount, 
   useReadContract, 
-  useWaitForTransactionReceipt, 
-  useWriteContract,
 } from 'wagmi'
 import { NFT_ABI } from '../utils/abis/NFT'
-import { useNFT } from '../hooks/NFT'
-import OvalButton from './OvalButton/OvalButton'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useCallback, useState } from 'react'
 import { ConnectWallet } from './ConnectWallet'
-import { getConnections, switchChain } from 'wagmi/actions'
-import { desiredChainData, wagmiConfig } from '@/wagmi'
-import { logEvent } from '../actions/logging'
+import { switchChain } from 'wagmi/actions'
+import { BTCB_ADDRESS, desiredChainData } from '@/config'
+import { LifecycleStatus, Transaction, TransactionButton, TransactionSponsor, TransactionStatus, TransactionStatusAction, TransactionStatusLabel, TransactionToast, TransactionToastAction, TransactionToastIcon, TransactionToastLabel } from '@coinbase/onchainkit/transaction'
+import BlockButton from './BlockButton/BlockButton'
+import { Token } from '@coinbase/onchainkit/token'
+import { ERC20_ABI } from '../utils/abis/ERC20'
+import { verifyMintSubscription } from '../actions/subscription'
+import { wagmiConfig } from '@/wagmi'
 
 const desiredChainId = desiredChainData.id // Base Sepolia
  
-export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
+export function MintNFT({contractAddress, token}: {contractAddress: `0x${string}`, token: Token | undefined} ) {
     const {address, chainId} = useAccount()
     const router = useRouter()
-
-  const { 
-    data: hash,
-    error,   
-    isPending, 
-    writeContract ,
-
-  } = useWriteContract() 
-
-  const {
-    data,
-    refetch: refetchBalance,
-    isRefetching
-  } = useReadContract({
-    address: contractAddress,
-    abi: NFT_ABI,
-    functionName: 'getNftsOwned',
-    args: [address]
-  })
+    const [mintSuccess, setMintSuccess] = useState(false)
 
   const {
     data: nftPrice,
@@ -48,88 +30,116 @@ export function MintNFT({contractAddress}: {contractAddress: `0x${string}`} ) {
     functionName: 'mintPrice'
   })
 
-  console.log({nftPrice})
-  const balance = data as unknown as { tokenId: bigint }[]
-  const lastTokenId = balance?.[balance.length - 1]?.tokenId
+  const {
+    data: allowance
+  } = useReadContract({
+    address: token?.address as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: 'allowance',
+    args: [address, contractAddress]
+  })
 
-  const { contractNameData } = useNFT(contractAddress)
+  const {
+    data: nftPriceErc20
+  } = useReadContract({
+    address: contractAddress,
+    abi: NFT_ABI,
+    functionName: 'mintPriceErc20'
+  })
 
-  async function mintNft() { 
-    writeContract({
+
+  const approveCall = {
+    address: token?.address,
+    abi: ERC20_ABI,
+    functionName: 'approve',
+    args: [contractAddress, nftPriceErc20 as bigint],
+  }
+
+  const mintWithErc20Call = {
+    address: contractAddress,
+    abi: NFT_ABI,
+    functionName: 'mintWithErc20',
+    args: [address],
+  }
+
+  const mintCall = {
       address: contractAddress,
       abi: NFT_ABI,
       functionName: 'safeMint',
       value: (nftPrice as bigint) > 0 ? (nftPrice as bigint) + BigInt(1) : undefined,
       args: [address],
-    })
+    }
+
+  const calls = token?.address === BTCB_ADDRESS ? [mintWithErc20Call] : [mintCall] 
+  const aproveIsNeeded = ((allowance as bigint) < (nftPriceErc20 as bigint))
+
+  if (aproveIsNeeded) {
+    // @ts-expect-error bypass
+    calls.unshift(approveCall)
   }
 
   async function changeRoute() {
-    router.push('/token/' + lastTokenId)
+    router.push('/profile/' + address)
   }
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = 
-    useWaitForTransactionReceipt({ 
-      hash, 
-    }) 
-
-  useEffect(() => {
-    if (isConfirmed) {
-      refetchBalance()
-      // router.push('/dapp')
+  const handleOnStatus = useCallback((status: LifecycleStatus) => {
+    if(status.statusName === 'success') {
+      const amount = token?.address === BTCB_ADDRESS ? nftPriceErc20 : nftPrice
+      console.log({amount})
+      verifyMintSubscription(status.statusData.transactionReceipts[0].transactionHash, Number(amount as bigint), 'mint')
+        .then(()=> {
+          setMintSuccess(true)
+        })
     }
-  }, [refetchBalance, isConfirmed])
-
-  useEffect(() => {
-    if (error) {
-      console.log('Error minting NFT:', (error as BaseError).shortMessage)
-      logEvent('mintNftError', (error as BaseError).message || (error as BaseError).shortMessage)
-    }
-  }, [error])
+  }, [nftPrice, nftPriceErc20, token]);
 
   return (
-      <div className='bg-black p-10 rounded-lg w-[300px] shadow-md'>
-        {contractNameData.data ? <h5 className='text-xl mb-1 text-white tracking-tight'>{String(contractNameData.data)}</h5> : <h5 className='text-xl mb-1 text-white tracking-tight'>Loading...</h5>}
-        <div className='flex justify-between mb-4' >
-          <p>price: 0.0001</p>
-          <p>US$0.00</p>
-        </div>
-
-      <div className='mb-3 mt-2 text-center'>
-        {isPending && <p>Waiting for user confirmation</p>}
-        {isConfirming && <p>Processing transaction, please wait...</p>}
-        {isConfirmed && <p>Token minted! </p>}
-        {error && <p>Error: {(error as BaseError).shortMessage || error.message}</p>}
-      </div>
-
-      <div className='flex justify-center'>
+        <div>
         {
         !address ?
           <ConnectWallet /> :
           chainId !== desiredChainId ?
-          <OvalButton
+          <BlockButton
           onClick={async () => {
-            const connections = getConnections(wagmiConfig)
-            console.log({connections})
-            const response = await switchChain(wagmiConfig, {
+            await switchChain(wagmiConfig, {
               chainId: desiredChainId,
             })
-            console.log({response})
           }}
-          disabled={isPending || isConfirming || isRefetching}
           type="button"
         >
           Switch to Base
-        </OvalButton> :
-          <OvalButton 
-          onClick={isConfirmed ? changeRoute : mintNft}
-          disabled={isPending || isConfirming || isRefetching} 
-          type="button"
+        </BlockButton> 
+        :
+        <Transaction
+          className='gap-0'
+          chainId={desiredChainId}
+          // @ts-expect-error bypass
+          calls={calls}
+          onStatus={handleOnStatus}
         >
-          {isConfirmed ? 'Token info' : isPending || isConfirming ? 'Confirming...' : 'Mint Token'} 
-        </OvalButton>
+          <TransactionSponsor />
+          <TransactionStatus>
+            <TransactionStatusLabel />
+            <TransactionStatusAction />
+          </TransactionStatus>
+          <TransactionToast>
+            <TransactionToastIcon />
+            <TransactionToastLabel />
+            <TransactionToastAction />
+          </TransactionToast>
+          {
+            mintSuccess ?
+            <BlockButton onClick={changeRoute}>
+              View Subscription
+            </BlockButton> :
+            <TransactionButton
+              className='bg-black text-white border border-primaryColor hover:bg-primaryColor'
+              disabled={!token}
+              text={!token ? 'Select a token' : !aproveIsNeeded ? 'Mint Token' : 'Approve'}
+            />
+          }
+        </Transaction>
         }
-      </div>
       </div>
   )
 }
