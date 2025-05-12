@@ -23,10 +23,9 @@ export default async function Profile(props: { params: Promise<{ address: string
 
   function getUserSubscription(userData: Prisma.UserWhereUniqueInput | null) {
     if(userData && userData.subscription) {
-      const periodInMilliseconds = 1000 * (userData.subscription.period as number)
-      const renewalTimestamp = (userData.subscription.renewalTimestamp as Date).getTime()
-      const isActive = renewalTimestamp + periodInMilliseconds > Date.now()
-      const expirationDate = new Date(renewalTimestamp + periodInMilliseconds)
+      const expirationTimestamp = (userData.subscription.expirationTimestamp as Date).getTime()
+      const isActive = expirationTimestamp > Date.now()
+      const expirationDate = new Date(expirationTimestamp)
       const daysLeft = Math.ceil((expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) 
 
       return {

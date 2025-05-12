@@ -62,6 +62,7 @@ export async function getUserSubscriptions(address: string) {
 
 export async function modifyUserSubscription(userId: number, subscription: {
     renewalTimestamp: Date,
+    expirationTimestamp: Date,
     autoRenewal: boolean,
     amount: bigint,
     period: number,
@@ -77,4 +78,20 @@ export async function modifyUserSubscription(userId: number, subscription: {
             ...subscription
         }
     })
+}
+
+export async function getExpiredSubscriptions() {
+    const now = new Date()
+    const subscriptions = await prisma.subscription.findMany({
+        where: {
+            expirationTimestamp: {
+                lte: now
+            },
+            autoRenewal: true
+        },
+        include: {
+            user: true
+        }
+    })
+    return subscriptions
 }

@@ -1,16 +1,19 @@
 import { PrismaClient } from '@prisma/client';
 
+// Extend the global namespace to include the prisma property
+declare global {
+  // eslint-disable-next-line no-var
+  var prisma: PrismaClient | undefined;
+}
+
 let prisma: PrismaClient;
 
 if (process.env.NODE_ENV === 'production') {
   prisma = new PrismaClient();
 } else {
-  // @ts-expect-error bypass
   if (!global.prisma) {
-  // @ts-expect-error bypass
     global.prisma = new PrismaClient();
   }
-  // @ts-expect-error bypass
   prisma = global.prisma;
 }
 

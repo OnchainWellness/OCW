@@ -6,7 +6,7 @@ import { addSubscriptionPayment } from "../../lib/SubscriptionPayment"
 import { getPublicClient } from "../../lib/spender"
 import { subscriptionPeriod } from "@/config"
 
-export async function verifyMintSubscription(txHash: `0x${string}`, amount: number, type: 'mint' | 'spend-permission') {
+export async function verifyMintSubscription(txHash: `0x${string}`, amount: bigint, type: 'mint' | 'spend-permission') {
     const session = await auth()
     if(!session || !session.user) {
         return false
@@ -47,7 +47,8 @@ export async function verifyMintSubscription(txHash: `0x${string}`, amount: numb
 
     const subscription = {
         renewalTimestamp: subscriptionPayment.createdAt,
-        autoRenewal: true,
+        expirationTimestamp: new Date(subscriptionPayment.createdAt.getTime() + period * 24 * 60 * 60 * 1000), // Calculate expiration
+        autoRenewal: false,
         amount: BigInt(amount),
         period: period,
         type

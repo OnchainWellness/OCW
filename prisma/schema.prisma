@@ -24,8 +24,11 @@ model Subscription {
   amount      BigInt
   period      Int
   type        String
+  token       String @default("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")
   renewalTimestamp DateTime
+  expirationTimestamp DateTime @default(now())
   autoRenewal Boolean
+  salt        BigInt @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
