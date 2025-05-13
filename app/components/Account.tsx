@@ -1,7 +1,7 @@
 import { signOut } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
 // const dappRoute = '/dapp/lo0m1pa2k'
@@ -13,7 +13,7 @@ export function Account() {
   const { data: ensAvatar } = useEnsAvatar({ name: ensName! })
   const [isOpen, setIsOpen] = useState(false);
   const toggleDropdown = () => setIsOpen(!isOpen);
-  const router = useRouter()
+  // const router = useRouter()
 
   console.log('chain', chain)
 
@@ -42,7 +42,7 @@ export function Account() {
                 redirectTo: dappRoute
               })
               .then(()=> {
-                router.push(dappRoute)
+                // router.push(dappRoute)
               })
             }}>Disconnect</button>
           </div>
