@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "cronjob": "node lib/cronjob.js",
+    "cronjob": "npx tsc -p tsconfig.cronjob.json && npx tsc-alias -p tsconfig.cronjob.json && node dist/lib/cronjob.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
