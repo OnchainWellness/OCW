@@ -24,9 +24,9 @@
   },
   "devDependencies": {
     "@types/jsrsasign": "^10.5.15",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/node": "^20.17.47",
+    "@types/react": "^18.3.21",
+    "@types/react-dom": "^18.3.7",
     "eslint": "^8",
     "eslint-config-next": "14.2.15",
     "postcss": "^8",
