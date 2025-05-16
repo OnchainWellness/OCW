@@ -3,9 +3,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 // import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi'
+import { BasenameDisplay } from './BasenameDisplay'
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi'
 // const dappRoute = '/dapp/lo0m1pa2k'
 const dappRoute = '/'
+
 
 export function Account() {
   const { address, chain } = useAccount()
@@ -27,7 +30,12 @@ export function Account() {
         onClick={toggleDropdown}
       >
         {ensAvatar && <Image alt="ENS Avatar" src={ensAvatar} />}
-         {address && <div>{ensName ? `${ensName} (${simplifiedAddress})` : simplifiedAddress}</div>}
+        {address && (
+          <div className="flex items-center gap-2">
+            <BasenameDisplay address={address} />
+            {!ensName && <span>({simplifiedAddress})</span>}
+          </div>
+        )}
       </button>
       {/* Dropdown Menu */}
       {isOpen && (
