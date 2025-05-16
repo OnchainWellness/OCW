@@ -2,7 +2,7 @@ import { Token } from "@coinbase/onchainkit/token"
 import { base, baseSepolia } from "viem/chains"
 
 // export const desiredChainData = process.env.NODE_ENV === 'development' ? baseSepolia : base
-export const desiredChainName = process.env.NEXT_PUBLIC_ETHEREUM_NETWORK
+export const desiredChainName = 'base'
 export const desiredChainData = desiredChainName  === 'base' ? base : baseSepolia
 
 // export const BTCB_ADDRESS = '0x0c41F1FC9022FEB69aF6dc666aBfE73C9FFDA7ce' // for production (BTCB)
