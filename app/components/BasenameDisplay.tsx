@@ -20,7 +20,11 @@ export function BasenameDisplay({ address }: BasenameDisplayProps) {
         [data-testid="ock-defaultAvatarSVG"] { color: white !important; fill: white !important; }
       `}</style>
       <div className="rounded-full bg-white/10 p-1 border-2 border-white">
-        <Avatar address={address} chain={base} />
+        <Avatar
+          className='h-6 w-6 m-0 p-0'
+          address={address}
+          chain={base}
+        />
       </div>
       <span className="font-bold text-lg">
         <Name address={address} chain={base} />
