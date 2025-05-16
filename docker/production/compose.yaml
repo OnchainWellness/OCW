@@ -11,7 +11,7 @@ services:
   cronjob:
     build: 
       context: ../../
-      dockerfile: docker/development/Cronjob.Dockerfile
+      dockerfile: docker/production/Cronjob.Dockerfile
     depends_on:
       - postgres
   postgres:
