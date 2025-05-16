@@ -51,8 +51,7 @@ export const tokensOptions: Token[] = [{
     address: contracts[desiredChainName as 'base' | 'baseSepolia'].ERC20.address,
     symbol: 'BTCB',
     decimals: 18,
-    image:
-        'https://btconbase.org/wp-content/uploads/2024/08/BTCB-Logo-1.png',
+    image: '/Bitcoin-on-Base-Logo.png',
     chainId: 8453,
     },
 ]
