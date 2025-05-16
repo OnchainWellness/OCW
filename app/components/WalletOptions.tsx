@@ -1,11 +1,16 @@
 'use client'
 
-import React from 'react'
-import { Connector, useAccount, useConnect } from 'wagmi'
+import React, { useEffect } from 'react'
+import { Connector, useAccount, useConnect, useDisconnect, useSignTypedData } from 'wagmi'
 import BlockButton from './BlockButton/BlockButton'
 import MetamaskIcon from '@/assets/images/metamask_logo.webp'
 import CoinBaseIcon from '@/assets/images/coinbase-wallet-logo.webp'
 import Image, { StaticImageData } from 'next/image'
+import { generateChallenge } from '../actions/challenge'
+import { signIn } from 'next-auth/webauthn'
+import { switchChain } from 'wagmi/actions'
+import { wagmiConfig } from '@/wagmi'
+import { desiredChainData } from '@/config'
 // import { generateChallenge, verifySignature } from '../actions/challenge'
 
 const connectorIdIconMap: { [key: string]: StaticImageData } = {
@@ -14,53 +19,41 @@ const connectorIdIconMap: { [key: string]: StaticImageData } = {
 }
 
 export function WalletOptions() {
-  const { connectors, connect, data, isSuccess } = useConnect()
-  // const { signTypedData } = useSignTypedData()
   const { address } = useAccount()
+  const { connectors, connect, isSuccess} = useConnect()
+  const { disconnect } = useDisconnect()
+  const { signTypedData } = useSignTypedData()
 
-  console.log({ connectors, data, address, isSuccess })
+  useEffect(() => {
+    if(isSuccess && address) {
+      generateChallenge(address)
+        .then(async (data)=> {
+          await switchChain(wagmiConfig, {
+            chainId: desiredChainData.id
+          })
+          // @ts-expect-error bypass
+          signTypedData(data, {
+            onSuccess: (signature) => {
+              signIn("credentials", {signature, address,redirect: false})
+              .catch(error => {
+                console.log({verifyError: error})
+                disconnect()
+              })
+            }
+          })
+        })
+    }
 
-  // React.useEffect(() => {
-  //   if (isSuccess && address) {
-  //       generateChallenge(address)
-  //         .then((data) => {
-  //           const typedData = {
-  //             types: {
-  //               EIP712Domain: [
-  //                 { name: 'name', type: 'string' },
-  //                 { name: 'version', type: 'string' },
-  //               ],
-  //               Challenge: Object.keys(data.message).map((key) => ({
-  //                 name: key,
-  //                 type: typeof data.message[key as keyof typeof data.message] === 'string' ? 'string' : 'unknown',
-  //               })),
-  //             },
-  //             primaryType: "Challenge" as const,
-  //             domain: {
-  //               name: data.domain.name,
-  //               version: data.domain.version,
-  //             },
-  //             message: data.message,
-  //           };
-  //           signTypedData(typedData, {
-  //             onSuccess: (signature) => {
-  //               verifySignature(signature, address)
-  //               .then((data) => {
-  //                 console.log('verified: ' + data)
-  //               }
-  //               )
-  //             },
-  //             onError: () => {},
-  //           })
-  //         })
-  //   }
-  // }, [isSuccess, address, signTypedData])
+  }, [isSuccess, address, signTypedData, disconnect])
 
   return connectors.map((connector) => (
     <WalletOption
       key={connector.uid}
       connector={connector}
-      onClick={() => connect({ connector })}
+      onClick={() => {
+        disconnect()
+        connect({ connector })
+      }}
     />
   ))
 }

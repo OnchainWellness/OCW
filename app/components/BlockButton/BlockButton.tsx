@@ -22,7 +22,7 @@ const BlockButton: FC<IBlockButton> = ({
     return (
         <button
             type="button"
-            className={"block-button " + className}
+            className={"block-button hover:bg-primaryColor transition duration-200 ease-in-out " + className}
             disabled={disabled}
             onClick={onClick}
             style={{

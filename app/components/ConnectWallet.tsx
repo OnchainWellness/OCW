@@ -6,13 +6,15 @@ import { Account } from "./Account";
 import OvalButton from "./OvalButton/OvalButton";
 import { Modal } from "./Modal";
 import { WalletOptions } from "./WalletOptions";
+import { useSession } from "next-auth/react";
 
 export function ConnectWallet() {
   const { isConnected } = useAccount();
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
-
-  if(isConnected && isOpen) setIsOpen(false);
-  if(isConnected) return <Account />;
+  
+  if(isConnected && isOpen && !!session) setIsOpen(false);
+  if(isConnected && !!session) return <Account />;
 
   return (
     <div>

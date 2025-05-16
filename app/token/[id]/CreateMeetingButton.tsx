@@ -32,7 +32,7 @@ export default function CreateMeetingButton({tokenOwnerAddress}: { tokenOwnerAdd
 
     if(address?.toLocaleLowerCase() === tokenOwnerAddress?.toLocaleLowerCase()) {
         return (
-            <div>
+            <div className="flex flex-row-reverse">
                 <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} className='z-10 text-center'>
                     <div className="px-10 pt-20 pb-14 rounded">
                         <h3 className="text-3xl text-center text-white mb-2">Getting meeting details</h3>
@@ -61,7 +61,7 @@ export default function CreateMeetingButton({tokenOwnerAddress}: { tokenOwnerAdd
                 onClick={handleClick}
                 className="bg-blue-500 text-white px-4 py-3 rounded"
                 >
-                    {isSuccess ? 'Get Meeting' : 'Create Meeting'}
+                    {isSuccess ? 'Get Meeting' : 'Get Meeting'}
                 </OvalButton>
             </div>
         );
