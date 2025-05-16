@@ -1,6 +1,6 @@
 'use server'
 
-import { BTCB_ADDRESS, ETH_ADDRESS } from "@/config";
+import { BTCB_ADDRESS, contractsUsed, ETH_ADDRESS } from "@/config";
 import { randomInt } from "node:crypto";
 import { parseUnits } from "viem";
 import { getPublicClient } from "../../lib/spender";
@@ -9,14 +9,14 @@ import { NFT_ABI } from "../utils/abis/NFT";
 const publicClient = await getPublicClient()
 
 const mintPrice = await publicClient.readContract({
-    address: process.env.NEXT_PUBLIC_NFT_CONTRACT as `0x${string}`,
+    address: contractsUsed.NFT.address,
     abi: NFT_ABI,
     functionName: 'mintPrice',
     args: []
 })
 
 const mintPriceErc20 = await publicClient.readContract({
-    address: process.env.NEXT_PUBLIC_NFT_CONTRACT as `0x${string}`,
+    address: contractsUsed.NFT.address,
     abi: NFT_ABI,
     functionName: 'mintPriceErc20',
     args: []

@@ -8,14 +8,12 @@ services:
       - "3001:3000"
     depends_on:
       - postgres
-  mongo:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: $MONGODB_USER
-      MONGO_INITDB_ROOT_PASSWORD: $MONGODB_PASSWORD
-    ports:
-      - "27017:27017"
+  cronjob:
+    build: 
+      context: ../../
+      dockerfile: docker/development/Cronjob.Dockerfile
+    depends_on:
+      - postgres
   postgres:
     image: postgres
     restart: always

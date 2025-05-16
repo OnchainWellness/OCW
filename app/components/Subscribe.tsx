@@ -18,7 +18,7 @@ import { Token } from "@coinbase/onchainkit/token";
 import { getRandomInt, getSubscriptionPrice } from "../actions/token";
 import { useRouter } from "next/navigation";
 import { wagmiConfig } from "@/wagmi";
-
+import { ToastContainer, toast} from 'react-toastify'
 interface SubscribeParams {
   token: Token | undefined
 }
@@ -52,8 +52,8 @@ export default function Subscribe({token}: SubscribeParams) {
           connector: connectors[0],
         });
         accountAddress = requestAccounts.accounts[0];
-      } catch {
-        return;
+      } catch  {
+        return notify('Account not connected');
       }
     }
 
@@ -98,6 +98,7 @@ export default function Subscribe({token}: SubscribeParams) {
       setSignature(signature);
     } catch (e) {
       console.error(e);
+      notify(String(e))
     }
     setIsDisabled(false);
   }
@@ -136,6 +137,10 @@ export default function Subscribe({token}: SubscribeParams) {
     setIsDisabled(false);
     return data;
   }
+
+  function notify (message: string) {
+    toast(message)
+  }
  
   useEffect(() => {
     if (!data) return;
@@ -147,6 +152,10 @@ export default function Subscribe({token}: SubscribeParams) {
  
   return (
     <div>
+      <ToastContainer
+        hideProgressBar
+        theme="dark"
+      />
       {!signature && !isSuccess ? (
         <div className="flex">
             {chainId !== desiredChainData.id ? 
