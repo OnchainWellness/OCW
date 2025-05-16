@@ -56,4 +56,4 @@ export const tokensOptions: Token[] = [{
     },
 ]
 
-export const subscriptionPeriod = 60 * 60 * 24 * 30 // 30 days
+export const subscriptionPeriod = 60 * 60 * 2 // 30 days
