@@ -36,13 +36,20 @@ export async function POST(request: NextRequest) {
     });
 
     console.log({approvalReceived})
- 
-    const spendTxnHash = await spenderBundlerClient.writeContract({
+    
+    let spendTxnHash: `0x${string}`
+
+    try {
+      spendTxnHash = await spenderBundlerClient.writeContract({
       address: spendPermissionManagerAddress,
       abi: spendPermissionManagerAbi,
       functionName: "spend",
       args: [spendPermission, "1"],
     });
+    } catch (error) {
+      // @ts-expect-error bypass
+      throw new Error(error?.cause?.reason)     
+    }
 
     console.log({spendTxnHash})
  
@@ -88,7 +95,8 @@ export async function POST(request: NextRequest) {
       transactionUrl: `${desiredChainData.blockExplorers.default.url}/tx/${spendReceipt.transactionHash}`,
     });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({}, { status: 500 });
+    console.error({error});
+    // @ts-expect-error bypass
+    return NextResponse.json({error: error?.message}, { status: 500 });
   }
 }

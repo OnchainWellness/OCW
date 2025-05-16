@@ -1,5 +1,6 @@
 import { FC } from "react"
 import "./BlockButton.css"
+import { cn, pressable } from '@coinbase/onchainkit/theme'
 
 interface IBlockButton extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     backgroundColor?: string;
@@ -22,7 +23,11 @@ const BlockButton: FC<IBlockButton> = ({
     return (
         <button
             type="button"
-            className={"block-button hover:bg-primaryColor transition duration-200 ease-in-out " + className}
+            className={cn(
+                disabled && pressable.disabled,
+                "block-button hover:bg-primaryColor disabled:text-gray-500  transition duration-200 ease-in-out ",
+                className
+            )}
             disabled={disabled}
             onClick={onClick}
             style={{

@@ -128,6 +128,9 @@ export default function Subscribe({token}: SubscribeParams) {
         ),
       });
       if (!response.ok) {
+        const data = await response.json()
+        notify(data.error)
+        setSignature(undefined)
         throw new Error("Network response was not ok");
       }
       data = await response.json();
@@ -147,16 +150,13 @@ export default function Subscribe({token}: SubscribeParams) {
     setTransactions([data?.transactionHash, ...transactions]);
   }, [data]);
 
-  console.log({chainId})
-  console.log('Hola')
- 
   return (
     <div>
       <ToastContainer
         hideProgressBar
         theme="dark"
       />
-      {!signature && !isSuccess ? (
+      {!signature || !isSuccess ? (
         <div className="flex">
             {chainId !== desiredChainData.id ? 
             <BlockButton onClick={()=> switchChain(wagmiConfig, {chainId: desiredChainData.id})}>
