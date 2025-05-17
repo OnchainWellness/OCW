@@ -1,6 +1,6 @@
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi';
 import { base, baseSepolia } from 'wagmi/chains'; // add baseSepolia for testing 
-import { coinbaseWallet, metaMask } from 'wagmi/connectors';
+import { coinbaseWallet } from 'wagmi/connectors';
  
 export const wagmiConfig =  createConfig({
     chains: [base, baseSepolia], // add baseSepolia for testing 
@@ -12,7 +12,6 @@ export const wagmiConfig =  createConfig({
         // @ts-expect-error bypass
         keysUrl: 'https://keys.coinbase.com/connect',
       }),
-      metaMask(),
     ],
     storage: createStorage({
       storage: cookieStorage,

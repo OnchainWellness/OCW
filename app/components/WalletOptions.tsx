@@ -47,7 +47,7 @@ export function WalletOptions() {
   }, [isSuccess, address, signTypedData, disconnect])
 
   return connectors.map((connector) => (
-    <WalletOption
+    connector.id === 'coinbaseWalletSDK' && <WalletOption
       key={connector.uid}
       connector={connector}
       onClick={() => {
