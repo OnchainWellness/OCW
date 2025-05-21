@@ -6,20 +6,24 @@ import { collectUserSubscription } from '@/lib/SubscriptionPayment';
 schedule('* * * * *', async () => {
     // cron.schedule('0 */2 * * *', () => {
     console.log('Ejecutando tarea cada minuto');
-    const subscriptions = await getExpiredSubscriptions()
-    console.log({subscriptions})
-    subscriptions.forEach(subscription => {
-        collectUserSubscription({
-            address: subscription.user.address,
-            amount: subscription.amount,
-            period: subscription.period,
-            salt: subscription.salt,
-            token: subscription.token
-        })
-        .then(console.log)
-        .catch(console.log)
-        
+    try {
+        const subscriptions = await getExpiredSubscriptions()
+        console.log({subscriptions})
+        subscriptions.forEach(subscription => {
+            collectUserSubscription({
+                address: subscription.user.address,
+                amount: subscription.amount,
+                period: subscription.period,
+                salt: subscription.salt,
+                token: subscription.token
+            })
+            .then(console.log)
+            .catch(console.log)
+            
     });
+    } catch (error) {
+        console.error(error)   
+    }
 });
 
 // Mantiene el proceso en ejecución

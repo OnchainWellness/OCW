@@ -87,7 +87,8 @@ export async function getExpiredSubscriptions() {
             expirationTimestamp: {
                 lte: now
             },
-            autoRenewal: true
+            autoRenewal: true,
+            type: 'spend-permission'
         },
         include: {
             user: true
