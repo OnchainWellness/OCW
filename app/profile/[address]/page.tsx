@@ -19,6 +19,10 @@ export default async function Profile(props: { params: Promise<{ address: string
 
   const userData = await getUserByAddress(address)
   const userSubscription = getUserSubscription(userData)
+  console.log({
+    userData,
+    userSubscription
+  })
   const subscriptionPayments = await getSubscriptionPayments(userData?.id, 0, 10)
 
   function getUserSubscription(userData: Prisma.UserWhereUniqueInput | null) {
