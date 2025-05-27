@@ -64,6 +64,7 @@ export async function modifyUserSubscription(userId: number, subscription: {
     renewalTimestamp: Date,
     expirationTimestamp: Date,
     autoRenewal: boolean,
+    token: string,
     amount: bigint,
     period: number,
     type: string

@@ -68,6 +68,7 @@ export async function collectUserSubscription({
         expirationTimestamp: new Date(subscriptionPayment.createdAt.getTime() + spendPermission.period * 1000),
         autoRenewal: true,
         amount: BigInt(amount),
+        token,
         period: spendPermission.period,
         type: 'spend-permission'
       }
