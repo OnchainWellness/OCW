@@ -86,7 +86,7 @@ export function MintNFT({contractAddress, token}: {contractAddress: `0x${string}
     if(status.statusName === 'success') {
       const amount = token?.address === BTCB_ADDRESS ? nftPriceErc20 : nftPrice
       console.log({amount})
-      verifyMintSubscription(status.statusData.transactionReceipts[0].transactionHash, amount as bigint, 'mint')
+      verifyMintSubscription(status.statusData.transactionReceipts[0].transactionHash, amount as bigint, 'mint', token?.address as string)
         .then(()=> {
           setMintSuccess(true)
         })

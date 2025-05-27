@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
         expirationTimestamp: new Date(Number(subscriptionPayment.createdAt) + Number(spendPermission.period) * 1000),
         autoRenewal: true,
         amount: BigInt(spendPermission.allowance),
+        token: spendPermission.token,
         period: spendPermission.period,
         salt: spendPermission.salt,
         type: 'spend-permission'
