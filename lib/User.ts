@@ -67,7 +67,8 @@ export async function modifyUserSubscription(userId: number, subscription: {
     token: string,
     amount: bigint,
     period: number,
-    type: string
+    type: string,
+    salt?: bigint
 }) {
     await prisma.subscription.upsert({
         where: {

@@ -70,6 +70,7 @@ export async function collectUserSubscription({
         amount: BigInt(amount),
         token,
         period: spendPermission.period,
+        salt: spendPermission.salt,
         type: 'spend-permission'
       }
 
