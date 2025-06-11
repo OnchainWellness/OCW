@@ -61,7 +61,7 @@ export default function Subscribe({token}: SubscribeParams) {
       account: accountAddress as Address, // User wallet address
       spender: process.env.NEXT_PUBLIC_SPENDER_ADDRESS! as Address, // Spender smart contract wallet address
       token: token?.address as Address,
-      allowance: await getSubscriptionPrice(token?.address || ""),
+      allowance: BigInt(await getSubscriptionPrice(token?.address || "")) + BigInt(1),
       period: subscriptionPeriod, // seconds in a day
       start: 0, // unix timestamp
       end: 281474976710655, // max uint48
@@ -91,7 +91,6 @@ export default function Subscribe({token}: SubscribeParams) {
           ],
         },
         primaryType: "SpendPermission",
-        // @ts-expect-error bypass
         message: spendPermission,
       });
       setSpendPermission(spendPermission);

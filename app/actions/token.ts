@@ -13,14 +13,14 @@ const mintPrice = await publicClient.readContract({
     abi: NFT_ABI,
     functionName: 'mintPrice',
     args: []
-})
+}) as string
 
 const mintPriceErc20 = await publicClient.readContract({
     address: contractsUsed.NFT.address,
     abi: NFT_ABI,
     functionName: 'mintPriceErc20',
     args: []
-})
+}) as string
 
 // const pricesDict = {
 //     [BTCB_ADDRESS.toLowerCase()]: parseUnits('5', 1),
