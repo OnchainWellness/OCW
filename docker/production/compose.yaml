@@ -8,12 +8,14 @@ services:
       - "3003:3000"
     depends_on:
       - postgres
+    restart: always
   cronjob:
     build: 
       context: ../../
       dockerfile: docker/production/Cronjob.Dockerfile
     depends_on:
       - postgres
+    restart: always
   postgres:
     image: postgres
     restart: always
