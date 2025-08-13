@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 export default function Header() {
     const router = usePathname();
     const isHomePage = router === '/';
-    const dappRoute = '/dapp/lo0m1pa2k'
+    const dappRoute = '/'
 
     console.log('isHomePage', isHomePage);
   return (
